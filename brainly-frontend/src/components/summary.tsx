@@ -12,14 +12,17 @@ export function Summarybox({
   const [sum, setSum] = useState(modified);
   async function updateSum(id: string) {
     const token = localStorage.getItem("token");
-    const resp = await fetch("http://localhost:3000/updatesummary", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        authorization: token ? token : "",
-      },
-      body: JSON.stringify({ id: id, summary: sum }),
-    });
+    const resp = await fetch(
+      "http://localhost:3000/api/v1/content/updatesummary",
+      {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          authorization: token ? token : "",
+        },
+        body: JSON.stringify({ id: id, summary: sum }),
+      }
+    );
     const response = await resp.json();
     return response;
   }

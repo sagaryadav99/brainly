@@ -24,6 +24,8 @@ app=FastAPI()
 @app.post("/getsummary")
 def fetchsummary(id:Item):  
     print(id.id)
+    if not id.id:
+        return
     fetched_transcript=yttapi.fetch(id.id)
     a=""
     for val in fetched_transcript.snippets:
@@ -36,7 +38,7 @@ def fetchsummary(id:Item):
 def insertdoc(fulldoc:Docs):
     collection=chroma_client.get_or_create_collection(name="mycollection",embedding_function=sentence_transformer_ef)
     collection.add(documents=[fulldoc.sum],ids=[fulldoc.contentid],metadatas=[{"userid":fulldoc.userid}])
-    return {"helloowrld":"succeded"}
+    return {"insertion":"succeded"}
 @app.post("/question")
 def closestdoc(question:Question):
     collection=chroma_client.get_collection(name="mycollection")
@@ -49,3 +51,13 @@ def closestdoc(question:Question):
             finalresult["ids"].append(ids)
     print(finalresult)
     return finalresult
+@app.delete("/deletedoc")
+def deletepost(contentid:Item):
+    collection=chroma_client.get_collection(name="mycollection")
+    collection.delete(ids=[contentid.id])
+    return {"deletion":"successful"}
+@app.put("/updatedoc")
+def updatepost(contentid:Docs):
+    collection=chroma_client.get_collection(name="mycollection")
+    collection.add(ids=[contentid.contentid],documents=[contentid.sum],metadatas=[{"userid":contentid.userid}])
+    return {"updation":"succeeded"}

@@ -1,1 +1,1 @@
-{"root":["./src/db.ts","./src/index.ts","./src/middleware.ts","./src/override.d.ts","./src/randomfunc.ts"],"version":"5.8.3"}
+{"root":["./src/brainrouter.ts","./src/contentrouter.ts","./src/db.ts","./src/index.ts","./src/middleware.ts","./src/override.d.ts","./src/randomfunc.ts","./src/tagrouter.ts","./src/userrouter.ts"],"version":"5.8.3"}

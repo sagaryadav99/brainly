@@ -28,7 +28,7 @@ export function Card(props: cardprops) {
           </div>
           <div className="flex items-center gap-2">
             <Shareicon />
-            <Deleteicon />
+            <Deleteicon contentid={props.id} />
           </div>
         </div>
         <div className="mt-2">

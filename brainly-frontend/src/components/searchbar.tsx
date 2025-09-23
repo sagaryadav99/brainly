@@ -26,7 +26,7 @@ export function Searchbar(props: searchbar) {
   async function searchfunc() {
     const token = localStorage.getItem("token");
     const inputrefs = inputref.current?.value;
-    const response = await fetch("http://localhost:3000/query", {
+    const response = await fetch("http://localhost:3000/api/v1/content/query", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
