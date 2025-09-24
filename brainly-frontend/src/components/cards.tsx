@@ -5,7 +5,6 @@ import Youtube from "react-youtube-embed";
 import { Tweet } from "react-tweet";
 import { Tagtile } from "./tagtile";
 import { Summarybox } from "./summary";
-import { Suspense } from "react";
 import { Sumloading } from "./sumloading";
 
 interface cardprops {
@@ -15,6 +14,7 @@ interface cardprops {
   link: string;
   tags?: [];
   summary?: string;
+  summaryStatus?: string;
 }
 
 export function Card(props: cardprops) {
@@ -43,9 +43,13 @@ export function Card(props: cardprops) {
             return <Tagtile key={index} tagcontent={item} />;
           })}
         </div>
-        <Suspense fallback={<Sumloading />}>
-          <Summarybox modified={props.summary} objid={props.id} />
-        </Suspense>
+        <div>
+          {props.summaryStatus === "pending" ? (
+            <Sumloading />
+          ) : (
+            <Summarybox modified={props.summary} objid={props.id} />
+          )}
+        </div>
       </div>
     </div>
   );

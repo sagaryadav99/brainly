@@ -9,6 +9,9 @@ import { Shareicon } from "../icons/shareicone";
 import { useState } from "react";
 import { Searchbar } from "../components/searchbar";
 import { useGetCards } from "../hooks/getcards";
+import { Twittericon } from "../icons/twitterIcon";
+import { SideBarItem } from "../components/sidebaritem";
+import { YoutubeIcon } from "../icons/youtubeIcon";
 
 export function Dashboard() {
   const [openmodal, setOpenmodal] = useState(false);
@@ -20,13 +23,18 @@ export function Dashboard() {
     return <div>{error.message}</div>;
   }
   return (
-    <div className="bg-gray-200 h-full">
-      <Sidebarcom
-        icon={<BrainIcon size={"size-8"} />}
-        title={`Second Brain ${
-          data[0] ? `of ${data[0].authorid.username}` : ""
-        }`}
-      />
+    <div className="bg-gray-200 min-h-screen h-fit pb-16 flex">
+      <div className="fixed top-0 left-0">
+        <Sidebarcom
+          icon={<BrainIcon size={"size-7"} />}
+          title={`Second Brain ${
+            data[0] ? `of ${data[0].authorid.username}` : ""
+          }`}
+        >
+          <SideBarItem icon={<Twittericon />} text={"twitter"} />
+          <SideBarItem icon={<YoutubeIcon />} text={"youtube"} />
+        </Sidebarcom>
+      </div>
       <div className="ml-52">
         <div className="flex items-center justify-end pt-2">
           <Button
@@ -46,7 +54,7 @@ export function Dashboard() {
             starticon={<Shareicon />}
           />
         </div>
-        <Searchbar placeholder="have a chat with your brain" />
+        <Searchbar placeholder="ask your brain" />
         <div className="flex flex-wrap">
           {data?.map((item: any) => {
             return (
@@ -58,14 +66,17 @@ export function Dashboard() {
                 link={item.link}
                 tags={item.tags}
                 summary={item.summary}
+                summaryStatus={item.summaryStatus}
               />
             );
           })}
         </div>
         <Createcontenmodal
           open={openmodal}
-          onClose={() => {
+          refetch={() => {
             refetch();
+          }}
+          onClose={() => {
             setOpenmodal(false);
           }}
         />

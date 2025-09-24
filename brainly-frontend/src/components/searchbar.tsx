@@ -40,50 +40,57 @@ export function Searchbar(props: searchbar) {
     mutation.mutate();
   }
   return (
-    <div className="w-5xl mt-4 p-12 rounded-md bg-stone-300">
-      <div className="flex items-center">
-        <input
-          ref={inputref}
-          placeholder={props.placeholder}
-          className="w-3xl border border-black rounded-sm bg-white p-2"
-        ></input>
-        <button
-          className="ml-12 border border-black rounded-sm bg-indigo-600 text-white w-24 h-8 cursor-pointer "
-          onClick={onclicksearch}
-        >
-          ask
-        </button>
-      </div>
-      {ans ? (
-        <div className="p-4">
-          <div className="flex gap-2">
-            {filterarr?.map((item: any) => {
-              return (
-                <Smallcard link={item.link} title={item.title} key={item._id} />
-              );
-            })}
-          </div>
-          <motion.div
-            initial={{
-              opacity: 0,
-              filter: "blur(10px)",
-              scale: 0.98,
-            }}
-            animate={{
-              opacity: 1,
-              filter: "blur(0px)",
-              scale: 1,
-            }}
-            transition={{
-              duration: 0.5,
-              ease: "easeInOut",
-            }}
-            className="bg-white rounded-md p-4 mt-2"
+    <motion.div layout transition={{ duration: 0.45, ease: "easeInOut" }}>
+      <div className="w-5xl mt-4 p-6 rounded-md bg-stone-300">
+        <div className="flex items-center">
+          <input
+            ref={inputref}
+            placeholder={props.placeholder}
+            className="w-3xl border border-black rounded-sm bg-white p-2"
+          ></input>
+          <button
+            className="ml-12 border border-black rounded-sm bg-indigo-600 text-white w-24 h-8 cursor-pointer "
+            onClick={onclicksearch}
           >
-            <div className="whitespace-pre-wrap">{ansbody}</div>
-          </motion.div>
+            ask
+          </button>
         </div>
-      ) : null}
-    </div>
+        {ans ? (
+          <div className="p-4">
+            <div className="flex gap-2">
+              {filterarr?.map((item: any) => {
+                return (
+                  <Smallcard
+                    link={item.link}
+                    title={item.title}
+                    key={item._id}
+                  />
+                );
+              })}
+            </div>
+            <motion.div
+              key={ansbody}
+              initial={{
+                opacity: 0,
+                filter: "blur(10px)",
+                scale: 0.98,
+              }}
+              animate={{
+                opacity: 1,
+                filter: "blur(0px)",
+                scale: 1,
+              }}
+              transition={{
+                duration: 1,
+                ease: "easeInOut",
+              }}
+              className="bg-white rounded-md p-4 mt-2"
+            >
+              <div className="whitespace-pre-wrap">{ansbody}</div>
+            </motion.div>
+          </div>
+        ) : null}
+      </div>
+    </motion.div>
   );
 }

@@ -31,8 +31,11 @@ contentrouter.post("/", middleware, async (req, res) => {
       tags: tags.tagarr,
       authorid,
       summary: "",
+      summaryStatus: "pending",
     });
-    res.status(200).json({ message: "content added successfully" });
+    res
+      .status(200)
+      .json({ message: "content added successfully", id: doccreated._id });
   } catch (error) {
     console.log(error);
     res.json({ error: error });
@@ -58,6 +61,7 @@ contentrouter.post("/", middleware, async (req, res) => {
     try {
       const updateddoc = await Contentmodel.findByIdAndUpdate(doccreated?._id, {
         summary: respsum.transcript[0].summary_text,
+        summaryStatus: "ready",
       });
       try {
         const sendsum = await fetch("http://127.0.0.1:8000/insertdoc", {
@@ -120,6 +124,7 @@ contentrouter.put("/updatesummary", middleware, async (req, res) => {
   try {
     const updateddoc = await Contentmodel.findByIdAndUpdate(id, {
       summary: summary,
+      summaryStaus: "manual",
     });
     if (!updateddoc) {
       return;
@@ -154,7 +159,9 @@ contentrouter.post("/query", middleware, async (req, res) => {
   });
   const finals = await fetchedsummaries.json();
   if (finals.documents.length == 0) {
-    res.status(200).json({ reply: "no notes found around this question" });
+    res
+      .status(200)
+      .json({ reply: "no content found around this question", filtered: [] });
     return;
   }
   const completion = await getGroqChatCompletion(question, finals.documents);
@@ -163,4 +170,15 @@ contentrouter.post("/query", middleware, async (req, res) => {
     reply: completion.choices[0]?.message.content,
     filtered: finals.ids,
   });
+});
+
+contentrouter.get("/post/:id", middleware, async function (req, res) {
+  const contentid = req.params.id;
+  const authorid = req.userid;
+  const result = await Contentmodel.find({
+    _id: contentid,
+    authorid: authorid,
+  });
+  console.log(result);
+  res.status(200).json(result);
 });

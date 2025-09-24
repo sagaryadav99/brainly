@@ -11,6 +11,11 @@ const Contentschema = new Schema({
   tags: { type: [String] },
   authorid: { type: Types.ObjectId, ref: "Users" },
   summary: { type: String },
+  summaryStatus: {
+    type: String,
+    enum: ["pending", "ready", "manual", "skipped"],
+    default: "pending",
+  },
 });
 export const Contentmodel = model("Contents", Contentschema);
 const Linkschema = new Schema({

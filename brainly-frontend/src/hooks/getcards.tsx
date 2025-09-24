@@ -3,6 +3,13 @@ export const useGetCards = () => {
   return useQuery({
     queryKey: ["cards"],
     queryFn: getcards,
+    refetchInterval: (query) => {
+      if (!query) return false;
+      const haspending =
+        Array.isArray(query.state.data) &&
+        query.state.data.some((c) => c.summaryStatus === "pending");
+      return haspending ? 2500 : false;
+    },
   });
 };
 async function getcards() {
