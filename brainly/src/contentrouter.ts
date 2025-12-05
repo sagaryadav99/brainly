@@ -2,87 +2,61 @@ import Router from "express";
 export const contentrouter = Router();
 import { middleware } from "./middleware";
 import { Contentmodel } from "./db";
-import { getGroqChatCompletion } from "./randomfunc";
+import { addingsummary, getGroqChatCompletion } from "./randomfunc";
+import { Datainterface } from "./types";
 contentrouter.post("/", middleware, async (req, res) => {
-  let { title, link, contenttype, tags } = req.body;
+  let { title, link, contenttype, tags, note } = req.body;
+  let processedLink;
   if (contenttype === "youtube") {
-    link = link.split("v=").slice(-1);
-    if (link[0].length == 11) {
-      link = link[0];
+    if (link.length > 43) {
+      processedLink = link.split("be/").slice(-1);
     } else {
-      let finallink = "";
-      for (let i = 0; i < 11; i++) {
-        finallink = finallink + link[0][i];
-      }
-      link = finallink;
+      processedLink = link.split("v=").slice(-1);
+    }
+    if (processedLink[0].length == 11) {
+      processedLink = processedLink[0];
+    } else {
+      processedLink = processedLink[0].slice(0, 11);
     }
   }
   if (contenttype === "twitter") {
-    link = link.split("/").slice(-1);
-    link = link[0];
+    processedLink = link.split("/").slice(-1);
+    processedLink = processedLink[0];
+    if (processedLink.length != 19) {
+      processedLink = processedLink.slice(0, 19);
+    }
+  }
+  if (contenttype === "note") {
+    processedLink = link;
   }
   const authorid = req.userid;
+  let data: Datainterface = {
+    title,
+    link: processedLink,
+    contenttype,
+    tags: tags.tagarr,
+    authorid,
+    summary: "",
+    summaryStatus: "pending",
+  };
+  if (contenttype === "note") {
+    data.note = note;
+  }
   let doccreated;
   try {
-    doccreated = await Contentmodel.create({
-      title,
-      link,
-      contenttype,
-      tags: tags.tagarr,
-      authorid,
-      summary: "",
-      summaryStatus: "pending",
-    });
+    doccreated = await Contentmodel.create(data);
+    addingsummary(
+      doccreated.contenttype,
+      doccreated.link,
+      doccreated._id,
+      doccreated.note ? doccreated.note : ""
+    );
     res
       .status(200)
       .json({ message: "content added successfully", id: doccreated._id });
   } catch (error) {
     console.log(error);
     res.json({ error: error });
-  }
-  try {
-    const sumz = await fetch("http://127.0.0.1:8000/getsummary", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ id: link }),
-    });
-    if (!sumz.ok) {
-      const text = await sumz.text();
-      console.error("getsummaryerror:", text);
-      return;
-    }
-    let respsum;
-    try {
-      respsum = await sumz.json();
-    } catch (e) {
-      console.error("failedtorespsum:", e);
-      return;
-    }
-    try {
-      const updateddoc = await Contentmodel.findByIdAndUpdate(doccreated?._id, {
-        summary: respsum.transcript[0].summary_text,
-        summaryStatus: "ready",
-      });
-      try {
-        const sendsum = await fetch("http://127.0.0.1:8000/insertdoc", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            userid: updateddoc?.authorid,
-            contentid: updateddoc?._id,
-            sum: respsum.transcript[0].summary_text,
-          }),
-        });
-        const finaldat = await sendsum.json();
-        console.log(finaldat);
-      } catch (e) {
-        console.log(e);
-      }
-    } catch (e) {
-      console.log(e);
-    }
-  } catch (e) {
-    console.log(e);
   }
 });
 contentrouter.get("/", middleware, async (req, res) => {

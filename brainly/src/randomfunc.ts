@@ -1,4 +1,6 @@
 import Groq from "groq-sdk";
+import { Contentmodel } from "./db";
+import { ObjectId, Types } from "mongoose";
 
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 export function randomhashgen(len: number) {
@@ -55,4 +57,102 @@ Format your output like chatgpt with proper structure, spaces and bullet points
     ],
     model: "llama-3.3-70b-versatile",
   });
+}
+
+export async function addingsummary(
+  contenttype: string,
+  link: string,
+  id: Types.ObjectId,
+  note: string
+) {
+  if (contenttype == "youtube") {
+    try {
+      const sumz = await fetch("http://127.0.0.1:8000/getsummary", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: link }),
+      });
+      if (!sumz.ok) {
+        const text = await sumz.text();
+        console.error("getsummaryerror:", text);
+        return;
+      }
+      let respsum;
+      try {
+        respsum = await sumz.json();
+      } catch (e) {
+        console.error("failedtorespsum:", e);
+        return;
+      }
+      updatingandinserting(id, respsum);
+    } catch (e) {
+      console.log(e);
+    }
+  } else if (contenttype == "twitter") {
+    //do the twitter api thing
+    const url = "https://api.twitterapi.io/twitter/tweets?tweet_ids=" + link;
+
+    try {
+      const response = await fetch(url, {
+        method: "GET",
+        headers: { "X-API-Key": process.env.X_API_KEY as string },
+        body: undefined,
+      });
+      const data = await response.json();
+      const respsum = await gensum(data.tweets[0].text);
+      const finalresp = await respsum?.json();
+      await updatingandinserting(id, finalresp);
+    } catch (error) {
+      console.error(error);
+    }
+  } else if (contenttype == "note") {
+    //updatingandinserting
+    try {
+      const respsum = await gensum(note);
+      const finalresp = await respsum?.json();
+      await updatingandinserting(id, finalresp);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+}
+async function updatingandinserting(
+  id: Types.ObjectId,
+  respsum: { transcript: { summary_text: string }[] }
+) {
+  try {
+    const updateddoc = await Contentmodel.findByIdAndUpdate(id, {
+      summary: respsum.transcript[0].summary_text,
+      summaryStatus: "ready",
+    });
+    try {
+      const sendsum = await fetch("http://127.0.0.1:8000/insertdoc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userid: updateddoc?.authorid,
+          contentid: updateddoc?._id,
+          sum: respsum.transcript[0].summary_text,
+        }),
+      });
+      const finaldat = await sendsum.json();
+      console.log(finaldat);
+    } catch (e) {
+      console.log(e);
+    }
+  } catch (e) {
+    console.log(e);
+  }
+}
+async function gensum(summary: string) {
+  try {
+    const sum = await fetch("http://127.0.0.1:8000/gensum", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ summary: summary }),
+    });
+    return sum;
+  } catch (error) {
+    console.log(error);
+  }
 }

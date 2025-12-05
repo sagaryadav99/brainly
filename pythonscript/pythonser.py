@@ -9,6 +9,8 @@ sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFuncti
     model_name="multi-qa-mpnet-base-cos-v1"
 )
 from pydantic import BaseModel
+class Summ(BaseModel):
+    summary:str
 class Item(BaseModel):
     id:str
 class Docs(BaseModel):
@@ -61,3 +63,6 @@ def updatepost(contentid:Docs):
     collection=chroma_client.get_collection(name="mycollection")
     collection.add(ids=[contentid.contentid],documents=[contentid.sum],metadatas=[{"userid":contentid.userid}])
     return {"updation":"succeeded"}
+@app.post("/gensum")
+def generatesum(summary:Summ):
+    return {"transcript":summarizer(summary.summary,max_length=200,min_length=50,do_sample=False)}

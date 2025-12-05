@@ -10,6 +10,7 @@ const Contentschema = new Schema({
   contenttype: { type: String, required: true },
   tags: { type: [String] },
   authorid: { type: Types.ObjectId, ref: "Users" },
+  note: { type: String },
   summary: { type: String },
   summaryStatus: {
     type: String,

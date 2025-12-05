@@ -46,7 +46,7 @@ export function Summarybox({
   return (
     <div>
       <textarea
-        className="w-full h-24"
+        className="w-full h-24 no-scrollbar"
         value={sum}
         onChange={onchangehandler}
         onFocus={() => {

@@ -5,6 +5,7 @@ import { Button } from "./Button";
 import { Inputcomp } from "./inputcom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tagcomp } from "./tagcomponent";
+import { LoaderCircle } from "../icons/loader";
 
 interface modalprops {
   open: boolean;
@@ -18,6 +19,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
   const titleref = useRef<HTMLInputElement>(null);
   const linkref = useRef<HTMLInputElement>(null);
   const tagref = useRef<HTMLInputElement>(null);
+  const noteref = useRef<HTMLTextAreaElement>(null);
   //const [tags,settags]=useState({tagarr:[]});
   const [tags, setTags] = useState<{ tagarr: string[] }>({ tagarr: [] });
   const token = localStorage.getItem("token");
@@ -26,22 +28,26 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
   const mutation1 = useMutation({
     mutationFn: postapi,
     onSuccess: () => {
-      refetch();
       onClose();
+      refetch();
       setTags({ tagarr: [] });
     },
   });
   async function postapi() {
     const title = titleref.current?.value;
     const link = linkref.current?.value;
+    let note = noteref.current?.value;
     const contenttype = content;
+    if (contenttype !== "note") {
+      note = "";
+    }
     const response = await fetch("http://localhost:3000/api/v1/content", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         Authorization: token ? token : "",
       },
-      body: JSON.stringify({ title, link, contenttype, tags }),
+      body: JSON.stringify({ title, link, contenttype, tags, note }),
     });
     const data = await response.json();
     if (!response.ok) {
@@ -122,6 +128,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
             <div>please select link type:</div>
             <div className="flex items-center justify-around m-2">
               <Button
+                key="youtube"
                 variant={`${content == "youtube" ? "primary" : "secondary"}`}
                 size="sm"
                 text="youtube"
@@ -130,11 +137,21 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                 }}
               />
               <Button
+                key="twitter"
                 variant={`${content == "twitter" ? "primary" : "secondary"}`}
                 size="sm"
                 text="twitter"
                 onClick={() => {
                   setContent("twitter");
+                }}
+              />
+              <Button
+                key="note"
+                variant={`${content == "note" ? "primary" : "secondary"}`}
+                size="sm"
+                text="Note"
+                onClick={() => {
+                  setContent("note");
                 }}
               />
             </div>
@@ -160,13 +177,29 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                 })}
               </div>
             </div>
+            {content == "note" ? (
+              <textarea
+                placeholder="add a note"
+                className="w-full border border-gray-500 rounded-sm hover:border-2 hover:border-gray-500"
+                ref={noteref}
+              />
+            ) : null}
             <div className="flex justify-center">
               <Button
                 variant="primary"
                 size="sm"
-                text="Add"
+                disabled={mutation1.isPending}
                 onClick={addcontent}
-              />
+              >
+                {mutation1.isPending ? (
+                  <span className="flex items-center gap-2">
+                    Adding
+                    <LoaderCircle />
+                  </span>
+                ) : (
+                  "Add"
+                )}
+              </Button>
             </div>
             <div className="text-center">
               {mutation1.isError ? (mutation1.error as Error).message : null}

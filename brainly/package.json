@@ -25,6 +25,7 @@
     "express": "^5.1.0",
     "groq-sdk": "^0.30.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.13.2"
+    "mongoose": "^8.13.2",
+    "react-tweet": "^3.2.2"
   }
 }

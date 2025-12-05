@@ -64,6 +64,7 @@ export function Searchbar(props: searchbar) {
                     link={item.link}
                     title={item.title}
                     key={item._id}
+                    contenttype={item.contenttype}
                   />
                 );
               })}

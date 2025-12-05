@@ -55,7 +55,7 @@ export function Dashboard() {
           />
         </div>
         <Searchbar placeholder="ask your brain" />
-        <div className="flex flex-wrap">
+        <div className="flex flex-wrap items-stretch">
           {data?.map((item: any) => {
             return (
               <Card
@@ -67,6 +67,7 @@ export function Dashboard() {
                 tags={item.tags}
                 summary={item.summary}
                 summaryStatus={item.summaryStatus}
+                note={item.note}
               />
             );
           })}
