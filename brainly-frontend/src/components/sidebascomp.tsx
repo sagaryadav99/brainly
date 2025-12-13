@@ -13,7 +13,7 @@ export function Sidebarcom({
   const [open, setOpen] = useState(false);
   return (
     <aside className={`h-screen transition-all ${open ? "w-52" : "w-12"}`}>
-      <nav className="h-full flex flex-col bg-white shadow-xl">
+      <nav className="h-full flex flex-col bg-background shadow-xl">
         <div className="pt-4 pb-2 pr-2 flex justify-between items-center">
           <span
             onClick={() => {

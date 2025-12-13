@@ -1,6 +1,8 @@
 export function Tagtile({ tagcontent }: { tagcontent: string }) {
   return (
-    <span className="bg-blue-200 p-1 border rounded m-1">{tagcontent}</span>
+    <span className="bg-zinc-800 text-neutral-400 p-1 border rounded m-1">
+      {tagcontent}
+    </span>
   );
 }
 {

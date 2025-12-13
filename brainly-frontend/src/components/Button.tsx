@@ -11,8 +11,10 @@ interface Buttonprops {
 }
 
 const variantstyle = {
-  primary: "bg-purple-600 text-white",
-  secondary: "bg-purple-200 text-purple-500",
+  primary:
+    "bg-blue-800 text-neutral-200 text-shadow-md hover:bg-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101",
+  secondary:
+    "text-blue-500 ring font-medium ring-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101",
 };
 
 const sizestyle = {

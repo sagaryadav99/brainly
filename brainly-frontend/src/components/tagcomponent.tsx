@@ -11,7 +11,7 @@ export function Tagcomp({
   return (
     <span
       className={`p-1 border rounded m-1 cursor-pointer ${
-        select ? "bg-blue-400" : "bg-white hover:bg-blue-300"
+        select ? "bg-blue-800" : "bg-background hover:bg-blue-600"
       }`}
       onClick={() => {
         setSelect(!select);

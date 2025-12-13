@@ -6,6 +6,8 @@ export function BrainIcon({ size }: { size: string }) {
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 512 512"
       className={size}
+      fill="oklch(54.6% 0.245 262.881)"
+      strokeWidth="10"
     >
       <g>
         <path

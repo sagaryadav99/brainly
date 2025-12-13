@@ -19,7 +19,7 @@ export function Smallcard(props: smallcardProps) {
         duration: 0.5,
         ease: "easeInOut",
       }}
-      className="w-56 border h-48 border-black p-4 rounded-md bg-white transition-all duration-300 ease-in-out overflow-hidden hover:w-64"
+      className="w-56 border h-48 border-black p-4 rounded-md bg-background text-neutral-300 overflow-hidden"
     >
       <div>{props.title}</div>
       {props.contenttype == "youtube" ? (

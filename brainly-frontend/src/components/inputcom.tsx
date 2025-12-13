@@ -10,7 +10,7 @@ export function Inputcomp(props: inputcomp) {
   return (
     <div>
       <input
-        className="border rounded p-2 m-[3px] w-full"
+        className="w-full px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all "
         placeholder={props.placeholder}
         ref={props.reference}
       ></input>

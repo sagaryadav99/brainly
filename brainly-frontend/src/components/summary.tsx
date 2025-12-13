@@ -44,7 +44,7 @@ export function Summarybox({
     setFocus(false);
   }
   return (
-    <div>
+    <div className="bg-zinc-1000 p-1 rounded-md text-neutral-300">
       <textarea
         className="w-full h-24 no-scrollbar"
         value={sum}
@@ -52,12 +52,13 @@ export function Summarybox({
         onFocus={() => {
           setFocus(true);
         }}
+        onPointerDown={(e) => e.stopPropagation()}
       ></textarea>
       {focus ? (
         <button
           id={objid}
           onClick={onclickhandler}
-          className="bg-gray-200 rounded border hover:cursor-pointer p-1"
+          className="text-blue-500 ring font-medium ring-blue-700 rounded border hover:cursor-pointer p-1"
         >
           save this summary
         </button>

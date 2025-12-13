@@ -1,10 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-
+import { useContext } from "react";
+import { CardContext } from "../contexts/CardContext";
 interface Deleteprop {
   contentid: string;
 }
 export function Deleteicon({ contentid }: Deleteprop) {
   const queryclient = useQueryClient();
+  const ctx = useContext(CardContext);
+
   const mutation = useMutation({
     mutationFn: deletepost,
     onSuccess: () => {
@@ -12,6 +15,9 @@ export function Deleteicon({ contentid }: Deleteprop) {
     },
   });
   function onclickhandler() {
+    if (ctx) {
+      ctx.setOpen(false);
+    }
     mutation.mutate();
   }
   async function deletepost() {
@@ -36,7 +42,8 @@ export function Deleteicon({ contentid }: Deleteprop) {
   return (
     <div
       className="cursor-pointer"
-      onClick={() => {
+      onClick={(e) => {
+        e.stopPropagation();
         onclickhandler();
       }}
     >

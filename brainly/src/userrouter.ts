@@ -5,16 +5,17 @@ import jwt from "jsonwebtoken";
 export const userrouter = Router();
 const JWT_password = process.env.JWT_PASSWORD!;
 userrouter.post("/signup", async (req, res) => {
-  const { username, password } = req.body;
+  const { fname, username, password } = req.body;
   try {
     await Usermodel.create({
+      fname: fname,
       username: username,
       password: await bcrypt.hash(password, 10),
     });
     res.status(200).json({ message: "user created successfully" });
   } catch (error: any) {
-    if (error.errorResponse.code === 11000) {
-      res.status(409).json({ response: "user already exists" });
+    if (error.code === 11000) {
+      res.status(409).json({ message: "user already exists" });
     } else {
       res.status(500).json({ message: "internal server error" });
     }
@@ -40,6 +41,6 @@ userrouter.post("/signin", async (req, res) => {
     }
   } catch (error) {
     console.log(error);
-    res.status(500).json({ error: error });
+    res.status(500).json({ message: error });
   }
 });

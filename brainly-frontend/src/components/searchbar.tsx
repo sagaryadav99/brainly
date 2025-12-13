@@ -3,6 +3,9 @@ import { useMutation } from "@tanstack/react-query";
 import { useGetCards } from "../hooks/getcards";
 import { Smallcard } from "./smallcard";
 import { motion } from "motion/react";
+import { FilterArr } from "../types/filterArrType";
+import { BrainIconAnimated } from "../icons/brainIconAnimated";
+import { Inputcomp } from "./inputcom";
 interface searchbar {
   placeholder: string;
 }
@@ -10,17 +13,27 @@ export function Searchbar(props: searchbar) {
   const inputref = useRef<HTMLInputElement>(null);
   const [ans, setAns] = useState(false);
   const [ansbody, setAnsbody] = useState("");
-  const [filterarr, setFilterarr] = useState([]);
+  const [filterarr, setFilterarr] = useState<FilterArr[]>();
   const { data } = useGetCards();
   const mutation = useMutation({
     mutationFn: searchfunc,
     onSuccess: (answer) => {
       setAns(true);
       setAnsbody(answer.reply);
-      const filteredarr = data.filter((element: { _id: string }) =>
-        answer.filtered.includes(element._id)
-      );
-      setFilterarr(filteredarr);
+      // const filteredarr = data.filter(function (element: { _id: string }) {
+      //   return answer.filtered.includes(element._id);
+      // });
+      const finalArr: FilterArr[] = [];
+      answer.filtered.forEach(function (item: string) {
+        data.forEach(function (element: FilterArr) {
+          if (element._id == item) {
+            console.log(element);
+            finalArr.push(element);
+          }
+        });
+      });
+      console.log(finalArr);
+      setFilterarr(finalArr);
     },
   });
   async function searchfunc() {
@@ -41,15 +54,17 @@ export function Searchbar(props: searchbar) {
   }
   return (
     <motion.div layout transition={{ duration: 0.45, ease: "easeInOut" }}>
-      <div className="w-5xl mt-4 p-6 rounded-md bg-stone-300">
-        <div className="flex items-center">
-          <input
-            ref={inputref}
-            placeholder={props.placeholder}
-            className="w-3xl border border-black rounded-sm bg-white p-2"
-          ></input>
+      <div className="w-full mt-4 mx-auto px-4 py-6 rounded-md bg-zinc-900 text-neutral-300">
+        <div className="flex items-center justify-center gap-8">
+          <BrainIconAnimated size="size-10" />
+          <div className="flex-grow">
+            <Inputcomp
+              reference={inputref}
+              placeholder={props.placeholder}
+            ></Inputcomp>
+          </div>
           <button
-            className="ml-12 border border-black rounded-sm bg-indigo-600 text-white w-24 h-8 cursor-pointer "
+            className="bg-blue-800 text-neutral-200 text-shadow-md px-8 py-2 rounded-lg hover:bg-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101"
             onClick={onclicksearch}
           >
             ask
@@ -85,7 +100,7 @@ export function Searchbar(props: searchbar) {
                 duration: 1,
                 ease: "easeInOut",
               }}
-              className="bg-white rounded-md p-4 mt-2"
+              className="bg-background text-neutral-200 rounded-md p-4 mt-2"
             >
               <div className="whitespace-pre-wrap">{ansbody}</div>
             </motion.div>

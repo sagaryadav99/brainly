@@ -132,6 +132,7 @@ contentrouter.post("/query", middleware, async (req, res) => {
     }),
   });
   const finals = await fetchedsummaries.json();
+  console.log(finals);
   if (finals.documents.length == 0) {
     res
       .status(200)
@@ -140,6 +141,7 @@ contentrouter.post("/query", middleware, async (req, res) => {
   }
   const completion = await getGroqChatCompletion(question, finals.documents);
   console.log(completion.choices[0]?.message.content);
+  console.log(finals.ids);
   res.status(200).json({
     reply: completion.choices[0]?.message.content,
     filtered: finals.ids,

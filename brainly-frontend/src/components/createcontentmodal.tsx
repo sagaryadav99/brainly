@@ -6,6 +6,7 @@ import { Inputcomp } from "./inputcom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tagcomp } from "./tagcomponent";
 import { LoaderCircle } from "../icons/loader";
+import { AnimatePresence, motion } from "motion/react";
 
 interface modalprops {
   open: boolean;
@@ -113,100 +114,132 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
   }
   return (
     <div>
-      {open && (
-        <div className="flex items-center justify-center">
-          <div
-            className="fixed top-0 bottom-0 left-0 right-0 bg-gray-200 opacity-50 backdrop-blur-sm "
-            onClick={onClose}
-          ></div>
-          <span className="bg-white fixed p-4 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded">
-            <span className="flex justify-end mb-2">
-              <Closeicon onClose={onClose} />
-            </span>
-            <Inputcomp placeholder="Title" reference={titleref} />
-            <Inputcomp placeholder="Link" reference={linkref} />
-            <div>please select link type:</div>
-            <div className="flex items-center justify-around m-2">
-              <Button
-                key="youtube"
-                variant={`${content == "youtube" ? "primary" : "secondary"}`}
-                size="sm"
-                text="youtube"
-                onClick={() => {
-                  setContent("youtube");
-                }}
-              />
-              <Button
-                key="twitter"
-                variant={`${content == "twitter" ? "primary" : "secondary"}`}
-                size="sm"
-                text="twitter"
-                onClick={() => {
-                  setContent("twitter");
-                }}
-              />
-              <Button
-                key="note"
-                variant={`${content == "note" ? "primary" : "secondary"}`}
-                size="sm"
-                text="Note"
-                onClick={() => {
-                  setContent("note");
-                }}
-              />
-            </div>
-            <div className="bg-gray-200 text-center">
-              <div className="flex">
-                Tags:
-                <Inputcomp placeholder="add a tag" reference={tagref} />
-                <button
-                  onClick={addtaghandler}
-                  className="bg-blue-300 p-2 rounded hover:bg-blue-500"
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="flex items-center justify-center h-full w-full"
+            initial={{
+              opacity: 0,
+            }}
+            animate={{
+              opacity: 1,
+            }}
+            exit={{
+              opacity: 0,
+              transition: {
+                duration: 0.3,
+                ease: "easeInOut",
+              },
+            }}
+            transition={{
+              duration: 0.3,
+              ease: "easeInOut",
+            }}
+          >
+            <motion.div
+              className="fixed inset-0 drop-shadow-blue-500/20"
+              onClick={onClose}
+              initial={{ backdropFilter: "blur(0px)", opacity: 0 }}
+              animate={{ backdropFilter: "blur(7px)", opacity: 1 }}
+              exit={{
+                backdropFilter: "blur(0px)",
+                opacity: 0,
+                transition: {
+                  duration: 0.3,
+                  ease: "easeInOut",
+                },
+              }}
+              transition={{ duration: 0.5, ease: "easeInOut" }}
+            ></motion.div>
+            <div className="bg-background text-neutral-300 fixed p-4 rounded absolute top-10 w-2xl min-h-[80%] flex flex-col gap-2 shadow-[10px_10px_35px_rgba(0,0,0,1)]">
+              <span className="flex justify-end mb-2">
+                <Closeicon onClose={onClose} />
+              </span>
+              <Inputcomp placeholder="Title" reference={titleref} />
+              <Inputcomp placeholder="Link" reference={linkref} />
+              <div className="flex items-center justify-center m-2 gap-4">
+                <div>please select link type:</div>
+                <Button
+                  key="youtube"
+                  variant={`${content == "youtube" ? "primary" : "secondary"}`}
+                  size="sm"
+                  text="youtube"
+                  onClick={() => {
+                    setContent("youtube");
+                  }}
+                />
+                <Button
+                  key="twitter"
+                  variant={`${content == "twitter" ? "primary" : "secondary"}`}
+                  size="sm"
+                  text="twitter"
+                  onClick={() => {
+                    setContent("twitter");
+                  }}
+                />
+                <Button
+                  key="note"
+                  variant={`${content == "note" ? "primary" : "secondary"}`}
+                  size="sm"
+                  text="Note"
+                  onClick={() => {
+                    setContent("note");
+                  }}
+                />
+              </div>
+              <div className="bg-background text-neutral-200 text-center flex flex-col gap-2">
+                <div className="flex items-center justify-center gap-4">
+                  Tags:
+                  <Inputcomp placeholder="add a tag" reference={tagref} />
+                  <button
+                    onClick={addtaghandler}
+                    className="bg-blue-800 p-2 rounded hover:bg-blue-500"
+                  >
+                    create new tag
+                  </button>
+                </div>
+                <div>
+                  {tags.tagarr.map((item) => {
+                    return item;
+                  })}
+                </div>
+                <div className="flex items-center px-4 py-2 rounded-md bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all ">
+                  {data?.map((item: any) => {
+                    return <Tagcomp content={item.tagname} addtag={addtag} />;
+                  })}
+                </div>
+              </div>
+              {content == "note" ? (
+                <textarea
+                  placeholder="add a note"
+                  className="w-full h-[100px] px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all "
+                  ref={noteref}
+                />
+              ) : null}
+              <div className="flex justify-center">
+                <Button
+                  variant="primary"
+                  size="sm"
+                  disabled={mutation1.isPending}
+                  onClick={addcontent}
                 >
-                  create new tag
-                </button>
+                  {mutation1.isPending ? (
+                    <span className="flex items-center gap-2">
+                      Adding
+                      <LoaderCircle />
+                    </span>
+                  ) : (
+                    "Add"
+                  )}
+                </Button>
               </div>
-              <div>
-                {tags.tagarr.map((item) => {
-                  return item;
-                })}
-              </div>
-              <div className="bg-gray border flex items-center">
-                {data?.map((item: any) => {
-                  return <Tagcomp content={item.tagname} addtag={addtag} />;
-                })}
+              <div className="text-center">
+                {mutation1.isError ? (mutation1.error as Error).message : null}
               </div>
             </div>
-            {content == "note" ? (
-              <textarea
-                placeholder="add a note"
-                className="w-full border border-gray-500 rounded-sm hover:border-2 hover:border-gray-500"
-                ref={noteref}
-              />
-            ) : null}
-            <div className="flex justify-center">
-              <Button
-                variant="primary"
-                size="sm"
-                disabled={mutation1.isPending}
-                onClick={addcontent}
-              >
-                {mutation1.isPending ? (
-                  <span className="flex items-center gap-2">
-                    Adding
-                    <LoaderCircle />
-                  </span>
-                ) : (
-                  "Add"
-                )}
-              </Button>
-            </div>
-            <div className="text-center">
-              {mutation1.isError ? (mutation1.error as Error).message : null}
-            </div>
-          </span>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

@@ -1,20 +1,25 @@
+@import url('https://fonts.googleapis.com/css2?family=Saira:ital,wght@0,100..900;1,100..900&display=swap');
 @import "tailwindcss";
 
 @theme {
+  --font-hero: "Saira", sans-serif;
   --color-midnight: #121063;
   --color-tahiti: #3ab7bf;
   --color-bermuda: #78dcca;
   --color-purple: {
     200: "#d9ddee",
-    500:"#9492db",
-    600:"#7164c0"
-  }
-  --color-gray:{
-    100:"#eeeeef",
-    200:"#e6e9ed",
-    600:"#95989c"
-  }
+    500: "#9492db",
+    600: "#7164c0",
+  };
+  --color-background: #07101A;
+  --color-zinc-1000:#1F2328;
+  --color-gray: {
+    100: "#eeeeef",
+    200: "#e6e9ed",
+    600: "#95989c",
+  };
 }
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -24,7 +29,10 @@
   scrollbar-width: none;     /* Firefox */
 }
 .youtube-container iframe {
-  height: 200px !important;
+  height: 150px !important;
+}
+.tweet-container iframe{
+  height:150px !important;
 }
 
 
