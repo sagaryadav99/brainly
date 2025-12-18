@@ -12,14 +12,14 @@ interface Buttonprops {
 
 const variantstyle = {
   primary:
-    "bg-blue-800 text-neutral-200 text-shadow-md hover:bg-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101",
+    "bg-blue-800 text-neutral-200 font-semibold text-base tracking-tight md:tracking-wide text-shadow-md hover:bg-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101",
   secondary:
-    "text-blue-500 ring font-medium ring-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101",
+    "text-blue-500 ring font-semibold ring-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101",
 };
 
 const sizestyle = {
-  sm: "px-10 py-2 rounded-md",
-  md: "px-10 py-4 rounded-md",
+  sm: "px-6 py-1 md:px-10 md:py-2 rounded-md",
+  md: "px-6 py-1 md:px-10 md:py-4 rounded-md",
 };
 
 const defaultstyle = "flex items-center justify-center cursor-pointer";
@@ -33,7 +33,7 @@ export function Button(props: Buttonprops) {
         variantstyle[props.variant]
       }`}
     >
-      <div className="flex items-center gap-2 justify-center">
+      <div className="flex items-center gap-1 md:gap-2 justify-center">
         {props.starticon}
         {props.children ?? props.text}
       </div>

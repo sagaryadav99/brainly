@@ -13,7 +13,7 @@ export function Summarybox({
   async function updateSum(id: string) {
     const token = localStorage.getItem("token");
     const resp = await fetch(
-      "http://localhost:3000/api/v1/content/updatesummary",
+      "http://192.168.1.8:3000/api/v1/content/updatesummary",
       {
         method: "PUT",
         headers: {

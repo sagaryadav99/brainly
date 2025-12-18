@@ -22,7 +22,7 @@ interface cardprops {
 export function MainBigCard(props: cardprops) {
   return (
     <motion.div
-      className="flex flex-col justify-between text-neutral-400 bg-zinc-900 outline outline-zinc-800 p-2 rounded-md pointer-events-auto"
+      className="flex w-[390px] md:w-auto flex-col justify-between text-neutral-400 bg-zinc-900 outline outline-zinc-800 p-2 rounded-md pointer-events-auto shadow-[0_6px_14px_-4px_oklch(30%_0_0_/_0.45)] overflow-hidden"
       layoutId={`card-${props.id}`}
       style={{
         willChange: "transform, opacity",
@@ -59,15 +59,15 @@ export function MainBigCard(props: cardprops) {
           <Deleteicon contentid={props.id as string} />
         </div>
       </div>
-      <div className="mt-2 mb-4">
+      <div className="my-2">
         {props.variant == "youtube" ? (
-          <div className="w-md h-2xl">
+          <div className="md:w-md h-2xl">
             <div className="rounded-xl overflow-hidden relative after:content-[''] after:inset-0 after:absolute after:w-full after:h-full after:opacity-40 after:bg-black after:pointer-events-none">
-              <YoutubeComp videoId={props.link as string} />
+              <YoutubeComp videoId={props.link as string} variant="bigcard" />
             </div>
           </div>
         ) : props.variant == "note" ? (
-          <div className="w-md h-[165px] flex flex-col justify-center">
+          <div className="md:w-md h-[165px] flex flex-col justify-center">
             <NoteText text={props.note ? props.note : ""} />
             <div className="text-right">
               <a
@@ -81,24 +81,19 @@ export function MainBigCard(props: cardprops) {
             </div>
           </div>
         ) : (
-          // <div className="h-[150px] w-full no-scrollbar overflow-y-auto rounded-xl tweet-container">
-          //   <div className="relative -top-5 -mb-8">
-          //     <Tweet id={props.link} />
-          //   </div>
-          // </div>
-          <div className="w-md h-[165px]">
+          <div className="md:w-md h-[165px]">
             <MytweetComp id={props.link as string} variant="bigcard" />
           </div>
         )}
       </div>
       {props.tags?.length != 0 ? (
-        <div className="m-2">
+        <div className="flex gap-0">
           {props.tags?.map((item, index: number) => {
-            return <Tagtile key={index} tagcontent={item} />;
+            return <Tagtile key={index} tagcontent={item} zindex={index} />;
           })}
         </div>
       ) : null}
-      <div>
+      <div className="mt-2">
         {props.summaryStatus === "pending" ? (
           <Sumloading />
         ) : (

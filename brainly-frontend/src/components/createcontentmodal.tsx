@@ -42,7 +42,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
     if (contenttype !== "note") {
       note = "";
     }
-    const response = await fetch("http://localhost:3000/api/v1/content", {
+    const response = await fetch("http://192.168.1.8:3000/api/v1/content", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -77,7 +77,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
       alert("empty tag");
       return;
     }
-    const resp = await fetch("http://localhost:3000/api/v1/tagname", {
+    const resp = await fetch("http://192.168.1.8:3000/api/v1/tagname", {
       method: "POST",
       headers: {
         "Content-type": "application/json",
@@ -103,7 +103,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
     }
   }
   async function gettags() {
-    const resp = await fetch("http://localhost:3000/api/v1/tagname", {
+    const resp = await fetch("http://192.168.1.8:3000/api/v1/tagname", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -151,90 +151,113 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
               }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             ></motion.div>
-            <div className="bg-background text-neutral-300 fixed p-4 rounded absolute top-10 w-2xl min-h-[80%] flex flex-col gap-2 shadow-[10px_10px_35px_rgba(0,0,0,1)]">
-              <span className="flex justify-end mb-2">
-                <Closeicon onClose={onClose} />
-              </span>
-              <Inputcomp placeholder="Title" reference={titleref} />
-              <Inputcomp placeholder="Link" reference={linkref} />
-              <div className="flex items-center justify-center m-2 gap-4">
-                <div>please select link type:</div>
-                <Button
-                  key="youtube"
-                  variant={`${content == "youtube" ? "primary" : "secondary"}`}
-                  size="sm"
-                  text="youtube"
-                  onClick={() => {
-                    setContent("youtube");
-                  }}
-                />
-                <Button
-                  key="twitter"
-                  variant={`${content == "twitter" ? "primary" : "secondary"}`}
-                  size="sm"
-                  text="twitter"
-                  onClick={() => {
-                    setContent("twitter");
-                  }}
-                />
-                <Button
-                  key="note"
-                  variant={`${content == "note" ? "primary" : "secondary"}`}
-                  size="sm"
-                  text="Note"
-                  onClick={() => {
-                    setContent("note");
-                  }}
-                />
-              </div>
-              <div className="bg-background text-neutral-200 text-center flex flex-col gap-2">
-                <div className="flex items-center justify-center gap-4">
-                  Tags:
-                  <Inputcomp placeholder="add a tag" reference={tagref} />
-                  <button
-                    onClick={addtaghandler}
-                    className="bg-blue-800 p-2 rounded hover:bg-blue-500"
-                  >
-                    create new tag
-                  </button>
+            <div className="bg-background text-neutral-300 fixed p-4 rounded-xl absolute top-5 w-[95%] md:w-2xl h-[525px] flex flex-col gap-2 shadow-[10px_10px_35px_rgba(0,0,0,1)] justify-around">
+              <div className="flex items-center">
+                <div className="flex-1 text-center font-bold text-xl">
+                  Paste your link here and let us summarize
                 </div>
                 <div>
-                  {tags.tagarr.map((item) => {
-                    return item;
-                  })}
-                </div>
-                <div className="flex items-center px-4 py-2 rounded-md bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all ">
-                  {data?.map((item: any) => {
-                    return <Tagcomp content={item.tagname} addtag={addtag} />;
-                  })}
+                  <Closeicon onClose={onClose} />
                 </div>
               </div>
-              {content == "note" ? (
-                <textarea
-                  placeholder="add a note"
-                  className="w-full h-[100px] px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all "
-                  ref={noteref}
-                />
-              ) : null}
-              <div className="flex justify-center">
-                <Button
-                  variant="primary"
-                  size="sm"
-                  disabled={mutation1.isPending}
-                  onClick={addcontent}
-                >
-                  {mutation1.isPending ? (
-                    <span className="flex items-center gap-2">
-                      Adding
-                      <LoaderCircle />
-                    </span>
-                  ) : (
-                    "Add"
-                  )}
-                </Button>
-              </div>
-              <div className="text-center">
-                {mutation1.isError ? (mutation1.error as Error).message : null}
+              <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2 no-scrollbar mask-background mask-b-from-background mask-b-from-95% mask-b-to-transparent mask-t-from-background mask-t-from-97% mask-t-to-transparent">
+                <Inputcomp placeholder="Title" reference={titleref} />
+                <Inputcomp placeholder="Link" reference={linkref} />
+                <div className="flex items-center justify-center m-2 gap-4">
+                  <div className="font-bold">Select link type:</div>
+                  <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                    <Button
+                      key="youtube"
+                      variant={`${
+                        content == "youtube" ? "primary" : "secondary"
+                      }`}
+                      size="sm"
+                      text="youtube"
+                      onClick={() => {
+                        setContent("youtube");
+                      }}
+                    />
+                    <Button
+                      key="twitter"
+                      variant={`${
+                        content == "twitter" ? "primary" : "secondary"
+                      }`}
+                      size="sm"
+                      text="twitter"
+                      onClick={() => {
+                        setContent("twitter");
+                      }}
+                    />
+                    <Button
+                      key="note"
+                      variant={`${content == "note" ? "primary" : "secondary"}`}
+                      size="sm"
+                      text="Note"
+                      onClick={() => {
+                        setContent("note");
+                      }}
+                    />
+                  </div>
+                </div>
+                <div className="bg-background text-neutral-200 text-center flex flex-col gap-2">
+                  <div className="flex items-center justify-center gap-4 font-semibold">
+                    Tags:
+                    <Inputcomp placeholder="add a tag" reference={tagref} />
+                    <button
+                      onClick={addtaghandler}
+                      className="bg-blue-800 p-1 tracking-tighter md:tracking-tight md:p-2 rounded hover:bg-blue-700 cursor-pointer"
+                    >
+                      create new tag
+                    </button>
+                  </div>
+                  <div className="flex gap-2 items-center bg-[#1F1F1F] rounded-md ring ring-neutral-600 px-4 py-2">
+                    <div className="pb-3 font-semibold">Selected Tags:</div>
+                    <div className="flex items-center gap-2 flex-1 w-auto flex-wrap">
+                      {tags.tagarr.map((item) => {
+                        return (
+                          <div className="bg-zinc-800 text-neutral-200 tracking-tighter rounded-lg h-[30px] max-w-auto border border-2 border-background flex items-center p-2">
+                            {item}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div className="flex items-center px-4 py-2 font-semibold rounded-md focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all flex-wrap">
+                    Available Tags:
+                    {data?.map((item: any) => {
+                      return <Tagcomp content={item.tagname} addtag={addtag} />;
+                    })}
+                  </div>
+                </div>
+                {content == "note" ? (
+                  <textarea
+                    placeholder="add a note"
+                    className="w-full h-[100px] px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all shrink-0"
+                    ref={noteref}
+                  />
+                ) : null}
+                <div className="flex justify-center">
+                  <Button
+                    variant="primary"
+                    size="sm"
+                    disabled={mutation1.isPending}
+                    onClick={addcontent}
+                  >
+                    {mutation1.isPending ? (
+                      <span className="flex items-center gap-2">
+                        Adding
+                        <LoaderCircle />
+                      </span>
+                    ) : (
+                      "Add"
+                    )}
+                  </Button>
+                </div>
+                <div className="text-center">
+                  {mutation1.isError
+                    ? (mutation1.error as Error).message
+                    : null}
+                </div>
               </div>
             </div>
           </motion.div>

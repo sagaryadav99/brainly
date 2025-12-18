@@ -8,16 +8,14 @@ contentrouter.post("/", middleware, async (req, res) => {
   let { title, link, contenttype, tags, note } = req.body;
   let processedLink;
   if (contenttype === "youtube") {
-    if (link.length > 43) {
+    console.log(link);
+    if (link.length < 43) {
       processedLink = link.split("be/").slice(-1);
     } else {
       processedLink = link.split("v=").slice(-1);
     }
-    if (processedLink[0].length == 11) {
-      processedLink = processedLink[0];
-    } else {
-      processedLink = processedLink[0].slice(0, 11);
-    }
+    processedLink = processedLink[0].slice(0, 11);
+    console.log(processedLink);
   }
   if (contenttype === "twitter") {
     processedLink = link.split("/").slice(-1);

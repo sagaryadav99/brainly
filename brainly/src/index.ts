@@ -26,4 +26,4 @@ app.use("/api/v1", userrouter);
 app.use("/api/v1/content", contentrouter);
 app.use("/api/v1/brain", brainrouter);
 app.use("/api/v1/tagname", tagrouter);
-app.listen(3000);
+app.listen(3000, "0.0.0.0");

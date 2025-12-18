@@ -10,8 +10,8 @@ export function SubHero() {
       <div className="text-4xl font-hero font-medium text-center">
         Your AI That Turns Links Into Knowledge
       </div>
-      <div className="flex justify-center items-center mt-3 gap-4">
-        <div className="p-4 flex flex-col max-w-[50%] divide-y-1 gap-2 divide-neutral-800 ">
+      <div className="flex md:flex-row flex-col flex-col-reverse justify-center items-center mt-3 md:gap-4 gap-2">
+        <div className="p-4 flex flex-col max-w-[97%] md:max-w-[50%] divide-y-1 gap-2 divide-neutral-800 ">
           <SubheroCard
             icon={<IdeaIcon />}
             heading="Your Knowledge, deserves clarity."
@@ -28,8 +28,8 @@ export function SubHero() {
             subheading="Every link you save, every video you watch, every thought you capture becomes part of a connected second brain that grows with you."
           />
         </div>
-        <div className="px-12 py-8 rounded-4xl hover:scale-110 cursor-pointer transition-all duration-500 min-w-[25%] min-h-[100%]">
-          <BrainIconAnimated size={"size-70"} />
+        <div className="py-2 px-8 md:px-12 md:py-8 rounded-4xl hover:scale-110 cursor-pointer transition-all duration-500 min-w-[25%] min-h-[100%]">
+          <BrainIconAnimated size={"size-35 md:size-70"} />
         </div>
       </div>
     </div>

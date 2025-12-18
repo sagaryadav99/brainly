@@ -46,7 +46,7 @@ export function SignupForm({ slidefn }: { slidefn: () => void }) {
         password: data.password,
       })
     );
-    const response = await fetch("http://localhost:3000/api/v1/signup", {
+    const response = await fetch("http://192.168.1.8:3000/api/v1/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

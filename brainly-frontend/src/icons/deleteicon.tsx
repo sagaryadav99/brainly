@@ -22,7 +22,7 @@ export function Deleteicon({ contentid }: Deleteprop) {
   }
   async function deletepost() {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://localhost:3000/api/v1/content", {
+    const response = await fetch("http://192.168.1.8:3000/api/v1/content", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -41,7 +41,7 @@ export function Deleteicon({ contentid }: Deleteprop) {
   }
   return (
     <div
-      className="cursor-pointer"
+      className="cursor-pointer hover:scale-105 transition-all ease-in-out hover:text-neutral-200"
       onClick={(e) => {
         e.stopPropagation();
         onclickhandler();

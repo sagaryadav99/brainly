@@ -14,7 +14,7 @@ export const useGetCards = () => {
 };
 async function getcards() {
   const token = localStorage.getItem("token");
-  const responses = await fetch("http://localhost:3000/api/v1/content", {
+  const responses = await fetch("http://192.168.1.8:3000/api/v1/content", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

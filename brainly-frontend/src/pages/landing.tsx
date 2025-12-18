@@ -4,7 +4,7 @@ import { SubHero } from "../components/subhero";
 
 export function Landing() {
   return (
-    <div className="min-h-screen bg-background text-gray-300 justify-center relative selection:bg-neutral-200 selection:text-black pb-10">
+    <div className="min-h-screen bg-background w-full text-gray-300 justify-center relative selection:bg-neutral-200 selection:text-black pb-10">
       <Navbar />
       <Hero />
       <SubHero />

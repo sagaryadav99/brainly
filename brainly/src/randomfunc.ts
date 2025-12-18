@@ -43,11 +43,11 @@ The input will contain:
 
 Your task:  
 - Answer the question using only the provided summaries as context.  
-- Clearly indicate in your answer which part came from which video summary, tweet or slef-written note by adding references like [Content 1], [Content 2], etc., after each relevant part of your answer.  
+- Clearly indicate in your answer which part came from which video summary, tweet or slef-written note by adding references like [Content 1], [Content 2], etc., after each relevant part of your answer. (This is important) 
 - Order should remain the same in which context is given.
 - If the summaries don’t have enough information, say “The provided summaries do not contain enough information to answer this question.”  
 
-Format your output like chatgpt with proper structure, spaces and bullet points  
+Format your output like chatgpt with proper structure, spaces, bulltet points and use **bold** for headings if any.  
 `,
       },
       // Set a user message for the assistant to respond to.

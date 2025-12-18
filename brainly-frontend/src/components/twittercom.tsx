@@ -23,26 +23,36 @@ export function MytweetComp({ id, variant }: MyTweetProp) {
       setTweet(data);
     }
   }, [data]);
-
+  function onclickhandler(e) {
+    e.stopPropagation();
+  }
   if (isLoading) return <div>Loading…</div>;
   if (error) return <div>Error loading tweet.</div>;
 
   if (!tweet) return <div>No tweet found</div>;
 
-  if (variant === "smallcard") {
-    return <div>{tweet.text}</div>;
-  }
-
   return (
-    <div className="w-full h-[165px] bg-background text-md rounded-lg px-2 py-2 overflow-hidden no-scrollbar overflow-y-auto">
+    <div
+      className={`w-full ${
+        variant == "smallcard"
+          ? "h-[120px] border border-2 border-black"
+          : "h-[165px]"
+      } bg-background rounded-lg px-2 py-2 overflow-hidden no-scrollbar overflow-y-auto`}
+    >
       <div className="flex justify-start items-center">
         <img
           src={tweet.user.profile_image_url_https}
-          className="rounded-full size-8"
+          className={`rounded-full ${
+            variant == "smallcard" ? "size-5" : "size-8"
+          }`}
         ></img>
-        <div className="grow-1 pl-1">
-          <div className="flex items-center text-lg">
-            <div className="text-md tracking-wide text-neutral-200">
+        <div className="grow-1 pl-1 flex flex-col">
+          <div className="flex items-center text-lg h-5">
+            <div
+              className={`${
+                variant == "smallcard" ? "text-sm" : "tracking-wide"
+              } text-neutral-200`}
+            >
               {tweet.user.screen_name}
             </div>
             {tweet.user.is_blue_verified && (
@@ -55,11 +65,17 @@ export function MytweetComp({ id, variant }: MyTweetProp) {
             @{tweet.user.name}
           </div>
         </div>
-        <div className="tweet icon">
-          <Twittericon />
+        <div className="tweet icon" onClick={onclickhandler}>
+          <a
+            href={`https://x.com/${tweet.user.name}/status/${id}`}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Twittericon />
+          </a>
         </div>
       </div>
-      <div className="text-md tracking-tight mt-2 text-neutral-200">
+      <div className="tracking-tight mt-2 text-neutral-200">
         {tweet.text}
         {long ? (
           <a
