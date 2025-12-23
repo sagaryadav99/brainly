@@ -5,12 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 const Schema = z.object({
-  // email: z.string().email("Invalid email"),
-  // password: z.string().min(8, "too short").max(16, "too long"),
-  // fname: z.string().min(4, "too short").max(16, "too long"),
-  email: z.string(),
-  password: z.string(),
-  fname: z.string(),
+  email: z.email("Invalid email"),
+  password: z.string().min(8, "too short").max(16, "too long"),
+  fname: z.string().min(4, "too short").max(16, "too long"),
 });
 type FormField = z.infer<typeof Schema>;
 export function SignupForm({ slidefn }: { slidefn: () => void }) {
@@ -39,13 +36,6 @@ export function SignupForm({ slidefn }: { slidefn: () => void }) {
     },
   });
   async function postapi(data: FormField) {
-    console.log(
-      JSON.stringify({
-        fname: data.fname,
-        username: data.email,
-        password: data.password,
-      })
-    );
     const response = await fetch("http://192.168.1.8:3000/api/v1/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },

@@ -6,7 +6,7 @@ interface smallcardProps {
   title: string;
   link: string;
   contenttype: string;
-  note?: string;
+  note: string;
 }
 export function Smallcard(props: smallcardProps) {
   return (
@@ -21,9 +21,9 @@ export function Smallcard(props: smallcardProps) {
         duration: 0.5,
         ease: "easeInOut",
       }}
-      className="w-56 border h-auto border-2 border-black p-2 rounded-xl bg-[#212121] text-neutral-300 overflow-hidden relative"
+      className="w-56 border h-auto border-2 border-black p-2 rounded-xl bg-[#212121] text-neutral-300 overflow-hidden relative hover:scale-102 transition-all duration-200 ease-in-out"
     >
-      <div className="pb-1 font-bold text-base text-neutral-300">
+      <div className="pb-1 font-bold text-base text-neutral-300 leading-4">
         {props.title}
       </div>
       {props.contenttype == "youtube" ? (
@@ -35,7 +35,7 @@ export function Smallcard(props: smallcardProps) {
       ) : (
         <div className="text-xs h-[120px] hover:cursor-pointer">
           <a href={props.link} target="_blank" rel="noopener noreferer">
-            <NoteText text={props.note as string} />
+            <NoteText text={props.note} />
           </a>
         </div>
       )}

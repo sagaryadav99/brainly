@@ -1,42 +1,57 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useMutation } from "@tanstack/react-query";
-import { useGetCards } from "../hooks/getcards";
 import { Smallcard } from "./smallcard";
 import { AnimatePresence, motion } from "motion/react";
 import { FilterArr } from "../types/filterArrType";
 import { BrainIconAnimated } from "../icons/brainIconAnimated";
 import { LoaderCircle } from "../icons/loader";
 import { TextComp } from "./textcomp";
+import { useNavigate } from "react-router-dom";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import z from "zod";
 interface searchbar {
   placeholder: string;
+  hidden: boolean;
+  cards?: FilterArr[];
 }
+const Schema = z.object({
+  question: z.string().max(100, "too long of a question"),
+});
+type FormField = z.infer<typeof Schema>;
 export function Searchbar(props: searchbar) {
-  const inputref = useRef<HTMLInputElement>(null);
+  const navigate = useNavigate();
   const [ans, setAns] = useState(false);
   const [ansbody, setAnsbody] = useState("");
   const [filterarr, setFilterarr] = useState<FilterArr[]>();
-  const { data } = useGetCards();
+  const data = props.cards;
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm<FormField>({
+    resolver: zodResolver(Schema),
+  });
   const mutation = useMutation({
-    mutationFn: searchfunc,
+    mutationFn: (formdata: FormField) => searchfunc(formdata),
     onSuccess: (answer) => {
       setAns(true);
       setAnsbody(answer.reply);
       const finalArr: FilterArr[] = [];
       answer.filtered.forEach(function (item: string) {
-        data.forEach(function (element: FilterArr) {
+        data?.forEach(function (element: FilterArr) {
           if (element._id == item) {
-            console.log(element);
             finalArr.push(element);
           }
         });
       });
-      console.log(finalArr);
       setFilterarr(finalArr);
     },
   });
-  async function searchfunc() {
+  async function searchfunc(formdata: FormField) {
     const token = localStorage.getItem("token");
-    const inputrefs = inputref.current?.value;
+    const inputrefs = formdata.question;
     const response = await fetch(
       "http://192.168.1.8:3000/api/v1/content/query",
       {
@@ -48,6 +63,11 @@ export function Searchbar(props: searchbar) {
         body: JSON.stringify({ queryquestion: inputrefs }),
       }
     );
+    if (!response.ok) {
+      const error = await response.json();
+      setError("root", { message: error.error });
+      throw new Error("too many requests");
+    }
     return response.json();
   }
   const parentVariant = {
@@ -68,25 +88,37 @@ export function Searchbar(props: searchbar) {
     close: { opacity: 0, x: 100, scale: 1 },
     open: { opacity: 1, x: 0, scale: 0.98 },
   };
-  function onclicksearch(e) {
-    e.preventDefault();
-    mutation.mutate();
-  }
+  const onSubmit: SubmitHandler<FormField> = (formdata) => {
+    if (props.hidden) {
+      navigate("/account");
+    }
+    mutation.mutate(formdata);
+  };
   return (
     <div>
       <div className="w-full mt-4 mx-auto px-1 md:px-2 lg:px-4 py-2 md:py-4 lg:py-6 rounded-xl bg-zinc-900 text-neutral-300 border-2 border-black">
-        <form className="flex items-center justify-center gap-2 md:gap-4 lg:gap-8">
+        <form
+          className="flex items-center justify-center gap-2 md:gap-4 lg:gap-8"
+          onSubmit={handleSubmit(onSubmit)}
+        >
           <BrainIconAnimated size="size-8 lg:size-10" />
           <div className="flex-grow">
-            <input
-              ref={inputref}
-              placeholder={props.placeholder}
-              className="w-full px-1 py-1 lg:px-2 lg:py-2 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all"
-            ></input>
+            <div>
+              <input
+                {...register("question")}
+                placeholder={props.placeholder}
+                className="w-full px-1 py-1 lg:px-2 lg:py-2 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all"
+              ></input>
+            </div>
+            {errors.question && (
+              <div className="text-red-500">{errors.question.message}</div>
+            )}
+            {errors.root && (
+              <div className="text-red-500">{errors.root.message}</div>
+            )}
           </div>
           <button
             className="w-[160px] md:w-[200px] lg:w-[220px] bg-blue-800 text-neutral-300 text-shadow-md text-small md:text-base tracking-tight md:tracking-wide font-bold px-2 md:px-4 lg:px-8 py-1 md:py-2 rounded-md md:rounded-lg hover:bg-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101"
-            onClick={onclicksearch}
             type="submit"
           >
             {mutation.isPending ? (

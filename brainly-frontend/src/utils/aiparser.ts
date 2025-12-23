@@ -4,7 +4,6 @@ type Block =
   | { type: "bullet"; content: string[] };
 
 export function aiparser(aitext: string) {
-  console.log(aitext);
   const trimmed = normalizeText(aitext).split("\n");
   const blocks: Block[] = [];
   let currentList: string[] = [];

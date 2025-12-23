@@ -2,10 +2,20 @@ import Router from "express";
 import { Usermodel } from "./db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { usersigninSchema, usersignupSchema } from "./schemas/user.schema";
+import { authLimiter } from "./limiters";
 export const userrouter = Router();
 const JWT_password = process.env.JWT_PASSWORD!;
-userrouter.post("/signup", async (req, res) => {
-  const { fname, username, password } = req.body;
+userrouter.post("/signup", authLimiter, async (req, res) => {
+  const parsed = usersignupSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({
+      message: "invalid input",
+      errors: parsed.error,
+    });
+    return;
+  }
+  const { fname, username, password } = parsed.data;
   try {
     await Usermodel.create({
       fname: fname,
@@ -22,8 +32,16 @@ userrouter.post("/signup", async (req, res) => {
   }
 });
 
-userrouter.post("/signin", async (req, res) => {
-  const { username, password } = req.body;
+userrouter.post("/signin", authLimiter, async (req, res) => {
+  const parsed = usersigninSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({
+      message: "invalid input",
+      error: parsed.error,
+    });
+    return;
+  }
+  const { username, password } = parsed.data;
   try {
     const result = await Usermodel.findOne({ username: username });
     if (!result) {

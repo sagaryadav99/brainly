@@ -2,7 +2,7 @@ export interface Datainterface {
   title: string;
   link: string;
   contenttype: string;
-  authorid: string | undefined;
+  authorid: string;
   summary: string;
   summaryStatus: string;
   note?: string;

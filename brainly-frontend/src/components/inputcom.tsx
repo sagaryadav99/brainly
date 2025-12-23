@@ -1,10 +1,7 @@
 import { RefObject } from "react";
-
-// eslint-disable @typescript-eslint/no-explicit-any
 interface inputcomp {
   placeholder: string;
-  //reference?: any;
-  reference: RefObject<HTMLInputElement>;
+  reference: RefObject<HTMLInputElement | null>;
 }
 export function Inputcomp(props: inputcomp) {
   return (

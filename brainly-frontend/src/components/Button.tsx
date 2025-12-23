@@ -8,6 +8,7 @@ interface Buttonprops {
   starticon?: ReactElement;
   text?: string | ReactElement;
   children?: React.ReactNode;
+  type?: "submit" | "reset" | "button";
 }
 
 const variantstyle = {
@@ -32,6 +33,7 @@ export function Button(props: Buttonprops) {
       className={`${defaultstyle} ${sizestyle[props.size]} ${
         variantstyle[props.variant]
       }`}
+      type={props.type}
     >
       <div className="flex items-center gap-1 md:gap-2 justify-center">
         {props.starticon}

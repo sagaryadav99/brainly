@@ -1,4 +1,5 @@
 import { model, Schema, Types } from "mongoose";
+import mongoose from "mongoose";
 const Userschema = new Schema({
   fname: { type: String, required: true },
   username: { type: String, required: true, index: { unique: true } },
@@ -31,3 +32,11 @@ const tagSchema = new Schema({
   authorid: { type: Types.ObjectId, ref: "Users" },
 });
 export const tagModel = model("Tags", tagSchema);
+export async function dbconnection(DB_STRING: string) {
+  try {
+    await mongoose.connect(DB_STRING);
+    console.log("connected to the mongodb cluster");
+  } catch (error) {
+    console.log(error);
+  }
+}

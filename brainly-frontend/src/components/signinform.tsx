@@ -5,10 +5,8 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "../icons/loader";
 const Schema = z.object({
-  // email: z.email(),
-  // password: z.string().min(8, "too short").max(16, "too long"),
-  email: z.string(),
-  password: z.string(),
+  email: z.email(),
+  password: z.string().min(8, "too short").max(16, "too long"),
 });
 type FormField = z.infer<typeof Schema>;
 export function SigninForm() {

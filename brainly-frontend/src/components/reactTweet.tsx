@@ -13,7 +13,6 @@ export function Mytweet({ id, variant }: MyTweetProp) {
   const { data, isLoading, error } = useTweet(id);
   useEffect(() => {
     if (data) setTweet(data);
-    console.log(data);
   }, [data]);
 
   if (isLoading) return <div>Loading…</div>;

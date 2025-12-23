@@ -10,20 +10,21 @@ import { LoaderCircle } from "../icons/loader";
 
 interface cardprops {
   variant?: "youtube" | "twitter" | "note";
-  id?: string;
+  id: string;
   title?: string;
-  link?: string;
+  link: string;
   tags?: [];
   summary?: string;
   summaryStatus?: string;
   note?: string;
   isexpanding: boolean;
+  hidden: boolean;
 }
 
 export function MainSmallCard(props: cardprops) {
   return (
     <motion.div
-      className="flex flex-col justify-between text-neutral-400 bg-zinc-900 outline outline-black p-2 rounded-md shadow-[0_6px_14px_-4px_rgba(0,0,0,1)] overflow-hidden"
+      className="flex flex-col justify-between text-neutral-400 bg-zinc-900 outline outline-black p-2 rounded-md shadow-[0_6px_14px_-4px_rgba(0,0,0,1)] overflow-hidden hover:-translate-y-1 transition-translate duration-300 ease-in-out"
       layoutId={`card-${props.id}`}
       style={{
         willChange: "transform, opacity",
@@ -78,18 +79,18 @@ export function MainSmallCard(props: cardprops) {
               <LoaderCircle />
             </div>
           ) : (
-            <div>{props.title}</div>
+            <div className="leading-4">{props.title}</div>
           )}
         </div>
         <div className="flex items-center gap-2 text-neutral-400">
           <Shareicon />
-          <Deleteicon contentid={props.id as string} />
+          {props.hidden ? null : <Deleteicon contentid={props.id} />}
         </div>
       </div>
       <div className="my-2">
         {props.variant == "youtube" ? (
           <div className="rounded-xl overflow-hidden relative after:content-[''] after:inset-0 after:absolute after:w-full after:h-full after:opacity-40 after:bg-black after:pointer-events-none">
-            <YoutubeComp videoId={props.link as string} variant="bigcard" />
+            <YoutubeComp videoId={props.link} variant="bigcard" />
           </div>
         ) : props.variant == "note" ? (
           <div className="h-[165px] w-full pb-2">
@@ -99,14 +100,14 @@ export function MainSmallCard(props: cardprops) {
                 href={props.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600"
+                className="text-blue-600 hover:underline"
               >
                 go to link
               </a>
             </div>
           </div>
         ) : (
-          <MytweetComp id={props.link as string} variant="bigcard" />
+          <MytweetComp id={props.link} variant="bigcard" />
         )}
       </div>
       {props.tags?.length != 0 ? (

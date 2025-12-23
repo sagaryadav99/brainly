@@ -7,14 +7,15 @@ export const middleware = (req: Request, res: Response, next: NextFunction) => {
     res.status(401).json({ message: "please signin first" });
     return;
   }
-  const verified = jwt.verify(token, JWT_password as string);
-  if (verified) {
+  try {
+    const verified = jwt.verify(token, JWT_password as string);
+
     if (typeof verified === "string") {
       return;
     }
     req.userid = verified.userid;
     next();
-  } else {
-    res.json({ message: "invalid login" });
+  } catch (err) {
+    res.status(401).json({ message: "session expired, please login again" });
   }
 };

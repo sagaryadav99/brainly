@@ -10,13 +10,14 @@ import { MytweetComp } from "./twittercom";
 import { motion } from "motion/react";
 interface cardprops {
   variant?: "youtube" | "twitter" | "note";
-  id?: string;
+  id: string;
   title?: string;
-  link?: string;
+  link: string;
   tags?: [];
   summary?: string;
   summaryStatus?: string;
   note?: string;
+  hidden: boolean;
 }
 
 export function MainBigCard(props: cardprops) {
@@ -56,14 +57,14 @@ export function MainBigCard(props: cardprops) {
         </div>
         <div className="flex items-center gap-2 text-neutral-400">
           <Shareicon />
-          <Deleteicon contentid={props.id as string} />
+          {props.hidden ? null : <Deleteicon contentid={props.id} />}
         </div>
       </div>
       <div className="my-2">
         {props.variant == "youtube" ? (
           <div className="md:w-md h-2xl">
             <div className="rounded-xl overflow-hidden relative after:content-[''] after:inset-0 after:absolute after:w-full after:h-full after:opacity-40 after:bg-black after:pointer-events-none">
-              <YoutubeComp videoId={props.link as string} variant="bigcard" />
+              <YoutubeComp videoId={props.link} variant="bigcard" />
             </div>
           </div>
         ) : props.variant == "note" ? (
@@ -82,7 +83,7 @@ export function MainBigCard(props: cardprops) {
           </div>
         ) : (
           <div className="md:w-md h-[165px]">
-            <MytweetComp id={props.link as string} variant="bigcard" />
+            <MytweetComp id={props.link} variant="bigcard" />
           </div>
         )}
       </div>
@@ -97,7 +98,11 @@ export function MainBigCard(props: cardprops) {
         {props.summaryStatus === "pending" ? (
           <Sumloading />
         ) : (
-          <Summarybox modified={props.summary} objid={props.id as string} />
+          <Summarybox
+            modified={props.summary}
+            objid={props.id}
+            hidden={props.hidden}
+          />
         )}
       </div>
     </motion.div>

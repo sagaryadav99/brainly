@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useRef, useState } from "react";
 import { Closeicon } from "../icons/closeicon";
 import { Button } from "./Button";
@@ -7,37 +6,61 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Tagcomp } from "./tagcomponent";
 import { LoaderCircle } from "../icons/loader";
 import { AnimatePresence, motion } from "motion/react";
-
+import { gettags } from "../utils/fetchfunctions";
+import { SubmitHandler, useForm } from "react-hook-form";
+import z from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+interface Tag {
+  authorid: string;
+  _id: string;
+  tagname: string;
+}
 interface modalprops {
   open: boolean;
   onClose: () => void;
   refetch: () => void;
   reference?: React.RefObject<HTMLElement>;
 }
-
+const schema = z.object({
+  title: z.string().max(80, "too long").min(5, "too short"),
+  link: z.url("invalid link"),
+  note: z.string().min(20, "too short").max(1500, "too long").optional(),
+});
+type FormField = z.infer<typeof schema>;
 export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm<FormField>({
+    resolver: zodResolver(schema),
+  });
   const queryClient = useQueryClient();
-  const titleref = useRef<HTMLInputElement>(null);
-  const linkref = useRef<HTMLInputElement>(null);
-  const tagref = useRef<HTMLInputElement>(null);
-  const noteref = useRef<HTMLTextAreaElement>(null);
-  //const [tags,settags]=useState({tagarr:[]});
+  const tagref = useRef<HTMLInputElement | null>(null);
   const [tags, setTags] = useState<{ tagarr: string[] }>({ tagarr: [] });
   const token = localStorage.getItem("token");
   const [content, setContent] = useState("youtube");
-  const { data } = useQuery({ queryKey: ["tags"], queryFn: gettags });
+  const { data } = useQuery({
+    queryKey: ["tags"],
+    queryFn: () => gettags(token),
+    retry: false,
+    enabled: !!token,
+  });
   const mutation1 = useMutation({
-    mutationFn: postapi,
+    mutationFn: (data: FormField) => postapi(data),
     onSuccess: () => {
       onClose();
       refetch();
+      reset();
       setTags({ tagarr: [] });
     },
+    retry: false,
   });
-  async function postapi() {
-    const title = titleref.current?.value;
-    const link = linkref.current?.value;
-    let note = noteref.current?.value;
+  async function postapi(formdata: FormField) {
+    const title = formdata.title;
+    const link = formdata.link;
+    let note = formdata.note;
     const contenttype = content;
     if (contenttype !== "note") {
       note = "";
@@ -52,24 +75,26 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
     });
     const data = await response.json();
     if (!response.ok) {
-      throw new Error(data.message);
+      console.log(data);
+      throw new Error(data.message || data.error);
     }
     return data;
   }
-  function addcontent() {
-    mutation1.mutate();
-  }
+  const onSubmit: SubmitHandler<FormField> = (data) => {
+    mutation1.mutate(data);
+  };
 
   const mutation2 = useMutation({
     mutationFn: addtags,
     onSuccess: refetching,
+    retry: false,
   });
   async function refetching() {
     if (tagref.current) {
       tagref.current.value = "";
     }
     await queryClient.invalidateQueries({ queryKey: ["tags"] });
-    await queryClient.refetchQueries({ queryKey: ["tags"] });
+    // await queryClient.refetchQueries({ queryKey: ["tags"] });
   }
   async function addtags() {
     const tag = tagref.current?.value;
@@ -85,6 +110,10 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
       },
       body: JSON.stringify({ tagname: tag }),
     });
+    if (!resp.ok) {
+      const error = await resp.json();
+      throw new Error(error.message || "failed to fetch");
+    }
     return resp.json();
   }
   function addtaghandler() {
@@ -95,22 +124,11 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
       const newarr = tags.tagarr.filter((x) => {
         return x != tgcontent;
       });
-      console.log(newarr);
       setTags({ tagarr: newarr });
     } else {
       const newarr = [...tags.tagarr, tgcontent];
       setTags({ tagarr: newarr });
     }
-  }
-  async function gettags() {
-    const resp = await fetch("http://192.168.1.8:3000/api/v1/tagname", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: token ? token : "",
-      },
-    });
-    return resp.json();
   }
   return (
     <div>
@@ -151,7 +169,10 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
               }}
               transition={{ duration: 0.5, ease: "easeInOut" }}
             ></motion.div>
-            <div className="bg-background text-neutral-300 fixed p-4 rounded-xl absolute top-5 w-[95%] md:w-2xl h-[525px] flex flex-col gap-2 shadow-[10px_10px_35px_rgba(0,0,0,1)] justify-around">
+            <form
+              className="bg-background text-neutral-300 fixed p-4 rounded-xl absolute top-5 w-[95%] md:w-2xl h-[525px] flex flex-col gap-2 shadow-[10px_10px_35px_rgba(0,0,0,1)] justify-around"
+              onSubmit={handleSubmit(onSubmit)}
+            >
               <div className="flex items-center">
                 <div className="flex-1 text-center font-bold text-xl">
                   Paste your link here and let us summarize
@@ -161,8 +182,22 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                 </div>
               </div>
               <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-2 no-scrollbar mask-background mask-b-from-background mask-b-from-95% mask-b-to-transparent mask-t-from-background mask-t-from-97% mask-t-to-transparent">
-                <Inputcomp placeholder="Title" reference={titleref} />
-                <Inputcomp placeholder="Link" reference={linkref} />
+                <input
+                  {...register("title")}
+                  placeholder="Title"
+                  className="w-full px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all"
+                />
+                {errors.title && (
+                  <div className="text-red-500">{errors.title.message}</div>
+                )}
+                <input
+                  {...register("link")}
+                  placeholder="Link"
+                  className="w-full px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all"
+                />
+                {errors.link && (
+                  <div className="text-red-500">{errors.link.message}</div>
+                )}
                 <div className="flex items-center justify-center m-2 gap-4">
                   <div className="font-bold">Select link type:</div>
                   <div className="flex flex-col gap-2 md:flex-row md:gap-4">
@@ -176,6 +211,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                       onClick={() => {
                         setContent("youtube");
                       }}
+                      type="button"
                     />
                     <Button
                       key="twitter"
@@ -187,6 +223,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                       onClick={() => {
                         setContent("twitter");
                       }}
+                      type="button"
                     />
                     <Button
                       key="note"
@@ -196,6 +233,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                       onClick={() => {
                         setContent("note");
                       }}
+                      type="button"
                     />
                   </div>
                 </div>
@@ -206,6 +244,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                     <button
                       onClick={addtaghandler}
                       className="bg-blue-800 p-1 tracking-tighter md:tracking-tight md:p-2 rounded hover:bg-blue-700 cursor-pointer"
+                      type="button"
                     >
                       create new tag
                     </button>
@@ -224,24 +263,28 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                   </div>
                   <div className="flex items-center px-4 py-2 font-semibold rounded-md focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all flex-wrap">
                     Available Tags:
-                    {data?.map((item: any) => {
+                    {data?.map((item: Tag) => {
                       return <Tagcomp content={item.tagname} addtag={addtag} />;
                     })}
                   </div>
                 </div>
                 {content == "note" ? (
-                  <textarea
-                    placeholder="add a note"
-                    className="w-full h-[100px] px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all shrink-0"
-                    ref={noteref}
-                  />
+                  <div>
+                    <textarea
+                      {...register("note")}
+                      placeholder="add a note"
+                      className="w-full h-[100px] px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all shrink-0 no-scrollbar"
+                    />
+                    {errors.note && (
+                      <div className="text-red-500">{errors.note.message}</div>
+                    )}
+                  </div>
                 ) : null}
                 <div className="flex justify-center">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    disabled={mutation1.isPending}
-                    onClick={addcontent}
+                  <button
+                    className="bg-blue-800 text-neutral-200 font-semibold text-base tracking-tight md:tracking-wide text-shadow-md hover:bg-blue-700 cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101 px-6 py-1 md:px-10 md:py-2 rounded-md"
+                    disabled={isSubmitting}
+                    type="submit"
                   >
                     {mutation1.isPending ? (
                       <span className="flex items-center gap-2">
@@ -251,15 +294,13 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                     ) : (
                       "Add"
                     )}
-                  </Button>
+                  </button>
                 </div>
-                <div className="text-center">
-                  {mutation1.isError
-                    ? (mutation1.error as Error).message
-                    : null}
+                <div className="text-center text-red-500">
+                  {mutation1.isError ? mutation1.error.message : null}
                 </div>
               </div>
-            </div>
+            </form>
           </motion.div>
         )}
       </AnimatePresence>

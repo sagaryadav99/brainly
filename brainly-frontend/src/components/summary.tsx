@@ -3,9 +3,11 @@ import { useState } from "react";
 export function Summarybox({
   modified,
   objid,
+  hidden,
 }: {
   modified?: string;
   objid: string;
+  hidden: boolean;
 }) {
   const queryclient = useQueryClient();
   const [focus, setFocus] = useState(false);
@@ -48,6 +50,7 @@ export function Summarybox({
       <textarea
         className="w-full h-24 no-scrollbar"
         value={sum}
+        disabled={hidden}
         onChange={onchangehandler}
         onFocus={() => {
           setFocus(true);

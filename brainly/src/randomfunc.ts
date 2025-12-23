@@ -15,7 +15,6 @@ export function randomhashgen(len: number) {
 
 export async function getGroqChatCompletion(question: string, documents: []) {
   let sumcontext = "";
-  console.log(documents);
   for (let sum in documents) {
     if (sumcontext === "") {
       sumcontext = "-" + documents[sum] + " \n";
@@ -23,12 +22,11 @@ export async function getGroqChatCompletion(question: string, documents: []) {
       sumcontext = sumcontext + "-" + documents[sum] + "\n";
     }
   }
-  console.log(sumcontext);
+
   const prompt = `Context:
   ${sumcontext}
   Question:${question}
   use the above context to answer the question`;
-  console.log(prompt);
   return groq.chat.completions.create({
     messages: [
       // Set an optional system message. This sets the behavior of the
@@ -90,7 +88,6 @@ export async function addingsummary(
       console.log(e);
     }
   } else if (contenttype == "twitter") {
-    //do the twitter api thing
     const url = "https://api.twitterapi.io/twitter/tweets?tweet_ids=" + link;
 
     try {
@@ -107,7 +104,6 @@ export async function addingsummary(
       console.error(error);
     }
   } else if (contenttype == "note") {
-    //updatingandinserting
     try {
       const respsum = await gensum(note);
       const finalresp = await respsum?.json();
@@ -137,7 +133,6 @@ async function updatingandinserting(
         }),
       });
       const finaldat = await sendsum.json();
-      console.log(finaldat);
     } catch (e) {
       console.log(e);
     }

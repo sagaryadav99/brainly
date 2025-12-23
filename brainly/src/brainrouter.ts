@@ -2,9 +2,19 @@ import Router from "express";
 import { Contentmodel, Linkmodel } from "./db";
 import { randomhashgen } from "./randomfunc";
 import { middleware } from "./middleware";
+import { brainSchema } from "./schemas/brain.schem";
+import { shareLimiter } from "./limiters";
 export const brainrouter = Router();
-brainrouter.get("/share", middleware, async (req, res) => {
-  const { share } = req.body;
+brainrouter.post("/share", middleware, shareLimiter, async (req, res) => {
+  const parsed = brainSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({
+      message: "invalid option",
+      error: parsed.error,
+    });
+    return;
+  }
+  const { share } = parsed.data;
   const randomhash = randomhashgen(10);
   const existing = await Linkmodel.findOne({ authorid: req.userid });
   if (existing) {
@@ -30,11 +40,11 @@ brainrouter.get("/:shareablelink", async (req, res) => {
   const hash = req.params.shareablelink;
   const linkdocument = await Linkmodel.findOne({ hash: hash });
   if (!linkdocument) {
-    res.json({ message: "this link is not valid" });
+    res.status(400).json({ message: "this link is not valid/expired" });
     return;
   }
   const data = await Contentmodel.find({
     authorid: linkdocument.authorid,
   }).populate("authorid", "username");
-  res.json({ data: data });
+  res.json(data);
 });
