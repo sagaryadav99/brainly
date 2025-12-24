@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import HamburgerMenu from "../icons/hamburger";
-import { BrainIcon } from "../icons/brainicon";
+import { BrainIcon } from "../icons/brainIcon";
 export function Navbar() {
   const [top, setTop] = useState(true);
   const [open, setOpen] = useState(false);

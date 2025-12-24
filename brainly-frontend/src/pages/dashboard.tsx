@@ -13,7 +13,7 @@ import { DummyCard } from "../components/skeletons/dummycard";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { BrainIconAnimated } from "../icons/brainIconAnimated";
-import { BrainIcon } from "../icons/brainicon";
+import { BrainIcon } from "../icons/brainIcon";
 const API = import.meta.env.VITE_BASE_URL;
 interface cardprops {
   contenttype: "youtube" | "twitter" | "note";
