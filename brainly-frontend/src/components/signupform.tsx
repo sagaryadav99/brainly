@@ -3,7 +3,7 @@ import { SubmitHandler, useForm } from "react-hook-form";
 import { LoaderCircle } from "../icons/loader";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
+const API = import.meta.env.VITE_BASE_URL;
 const Schema = z.object({
   email: z.email("Invalid email"),
   password: z.string().min(8, "too short").max(16, "too long"),
@@ -36,7 +36,7 @@ export function SignupForm({ slidefn }: { slidefn: () => void }) {
     },
   });
   async function postapi(data: FormField) {
-    const response = await fetch("http://192.168.1.8:3000/api/v1/signup", {
+    const response = await fetch(API + "/api/v1/signup", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

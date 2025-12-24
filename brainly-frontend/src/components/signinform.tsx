@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoaderCircle } from "../icons/loader";
+const API = import.meta.env.VITE_BASE_URL;
 const Schema = z.object({
   email: z.email(),
   password: z.string().min(8, "too short").max(16, "too long"),
@@ -35,7 +36,7 @@ export function SigninForm() {
     },
   });
   async function postapi(formdata: FormField) {
-    const response = await fetch("http://192.168.1.8:3000/api/v1/signin", {
+    const response = await fetch(API + "/api/v1/signin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({

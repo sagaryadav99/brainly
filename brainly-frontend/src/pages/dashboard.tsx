@@ -14,6 +14,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { BrainIconAnimated } from "../icons/brainIconAnimated";
 import { BrainIcon } from "../icons/brainicon";
+const API = import.meta.env.VITE_BASE_URL;
 interface cardprops {
   contenttype: "youtube" | "twitter" | "note";
   _id: string;
@@ -42,6 +43,7 @@ export function Dashboard() {
   const error = shareId ? sharedCard.error : normalCard.error;
   const refetch = normalCard.refetch;
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (isError && (error as any)?.status === 401) {
       localStorage.removeItem("token");
       setToken(null);
@@ -69,7 +71,7 @@ export function Dashboard() {
     mutation.mutate(immediateValue);
   }
   async function shareablefn(immediateValue: boolean) {
-    const data = await fetch("http://192.168.1.8:3000/api/v1/brain/share", {
+    const data = await fetch(API + "/api/v1/brain/share", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

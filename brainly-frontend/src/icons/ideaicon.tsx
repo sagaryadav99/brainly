@@ -1,6 +1,6 @@
 import * as React from "react";
 
-const IdeaIcon: React.FC<React.SVGProps<SVGElement>> = (props) => (
+const IdeaIcon: React.FC<React.SVGProps<SVGElement>> = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width="800"

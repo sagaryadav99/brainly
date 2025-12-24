@@ -23,7 +23,7 @@ export function MytweetComp({ id, variant }: MyTweetProp) {
       setTweet(data);
     }
   }, [data]);
-  function onclickhandler(e) {
+  function onclickhandler(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
   }
   if (isLoading) return <div>Loading…</div>;

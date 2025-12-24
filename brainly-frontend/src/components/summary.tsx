@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
+const API = import.meta.env.VITE_BASE_URL;
 export function Summarybox({
   modified,
   objid,
@@ -14,17 +15,14 @@ export function Summarybox({
   const [sum, setSum] = useState(modified);
   async function updateSum(id: string) {
     const token = localStorage.getItem("token");
-    const resp = await fetch(
-      "http://192.168.1.8:3000/api/v1/content/updatesummary",
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: token ? token : "",
-        },
-        body: JSON.stringify({ id: id, summary: sum }),
-      }
-    );
+    const resp = await fetch(API + "/api/v1/content/updatesummary", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token ? token : "",
+      },
+      body: JSON.stringify({ id: id, summary: sum }),
+    });
     const response = await resp.json();
     return response;
   }

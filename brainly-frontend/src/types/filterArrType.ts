@@ -8,4 +8,5 @@ export interface FilterArr {
   title: string;
   __v: number;
   _id: string;
+  note?: string;
 }

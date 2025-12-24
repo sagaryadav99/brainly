@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+const API = import.meta.env.VITE_BASE_URL;
 export const useGetCards = (token: string | null) => {
   return useQuery({
     queryKey: ["cards"],
@@ -16,7 +17,7 @@ export const useGetCards = (token: string | null) => {
 };
 async function getcards() {
   const token = localStorage.getItem("token");
-  const responses = await fetch("http://192.168.1.8:3000/api/v1/content", {
+  const responses = await fetch(API + "/api/v1/content", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -38,13 +39,10 @@ export const useGetSharedCards = (shareId: string | undefined) => {
   });
 };
 async function getsharedcards(shareId: string | undefined) {
-  const response = await fetch(
-    "http://192.168.1.8:3000/api/v1/brain/" + shareId,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const response = await fetch(API + "/api/v1/brain/" + shareId, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
   if (!response.ok) {
     const error = await response.json();
     throw new Error(error.message || "Request failed");

@@ -1,8 +1,14 @@
 from fastapi import FastAPI
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api.proxies import WebshareProxyConfig
 from transformers import pipeline
 from typing import Dict
+from dotenv import load_dotenv
+import os
 import chromadb
+load_dotenv()
+USERNAME=os.getenv("YOUTUBE_PROXY_USERNAME")
+PASSWORD=os.getenv("YOUTUBE_PROXY_PASSWORD")
 chroma_client=chromadb.PersistentClient(path="./chroma_storage")
 from chromadb.utils import embedding_functions
 sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
@@ -21,14 +27,20 @@ class Question(BaseModel):
     question:str
     userid:str
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-yttapi=YouTubeTranscriptApi()
+ytt_api = YouTubeTranscriptApi(
+    proxy_config=WebshareProxyConfig(
+        proxy_username=USERNAME,
+        proxy_password=PASSWORD,
+    )
+)
+
 app=FastAPI()
 @app.post("/getsummary")
 def fetchsummary(id:Item):  
     print(id.id)
     if not id.id:
         return
-    fetched_transcript=yttapi.fetch(id.id)
+    fetched_transcript=ytt_api.fetch(id.id)
     a=""
     for val in fetched_transcript.snippets:
         a=a+" "+val.text

@@ -66,7 +66,7 @@ export async function addingsummary(
 ) {
   if (contenttype == "youtube") {
     try {
-      const sumz = await fetch("http://127.0.0.1:8000/getsummary", {
+      const sumz = await fetch("http://localhost:8000/getsummary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: link }),
@@ -123,7 +123,7 @@ async function updatingandinserting(
       summaryStatus: "ready",
     });
     try {
-      const sendsum = await fetch("http://127.0.0.1:8000/insertdoc", {
+      const sendsum = await fetch("http://localhost:8000/insertdoc", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -142,7 +142,7 @@ async function updatingandinserting(
 }
 async function gensum(summary: string) {
   try {
-    const sum = await fetch("http://127.0.0.1:8000/gensum", {
+    const sum = await fetch("http://localhost:8000/gensum", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ summary: summary }),

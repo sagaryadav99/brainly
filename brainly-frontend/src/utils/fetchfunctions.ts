@@ -1,5 +1,6 @@
+const API = import.meta.env.VITE_BASE_URL;
 export async function gettags(token: string | null) {
-  const resp = await fetch("http://192.168.1.8:3000/api/v1/tagname", {
+  const resp = await fetch(API + "/api/v1/tagname", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

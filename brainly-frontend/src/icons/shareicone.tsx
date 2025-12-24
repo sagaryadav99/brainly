@@ -1,5 +1,5 @@
 export function Shareicon() {
-  function onclickhandler(e) {
+  function onclickhandler(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
   }
   return (

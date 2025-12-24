@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useContext } from "react";
 import { CardContext } from "../contexts/CardContext";
+const API = import.meta.env.VITE_BASE_URL;
 interface Deleteprop {
   contentid: string;
 }
@@ -22,7 +23,7 @@ export function Deleteicon({ contentid }: Deleteprop) {
   }
   async function deletepost() {
     const token = localStorage.getItem("token");
-    const response = await fetch("http://192.168.1.8:3000/api/v1/content", {
+    const response = await fetch(API + "/api/v1/content", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -33,6 +34,7 @@ export function Deleteicon({ contentid }: Deleteprop) {
     return response.json();
   }
   async function refetching(contentid: string) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     queryclient.setQueryData(["cards"], (currelement: any) => {
       return currelement?.filter(
         (posts: { _id: string }) => posts._id != contentid

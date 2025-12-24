@@ -9,7 +9,7 @@ export function YoutubeComp({
   variant: string;
 }) {
   const [ytiframe, setIframe] = useState(false);
-  function onclickhandler(e) {
+  function onclickhandler(e: React.MouseEvent<HTMLDivElement>) {
     e.stopPropagation();
     setIframe((x) => !x);
   }

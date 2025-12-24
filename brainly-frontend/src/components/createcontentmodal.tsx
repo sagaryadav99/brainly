@@ -10,6 +10,7 @@ import { gettags } from "../utils/fetchfunctions";
 import { SubmitHandler, useForm } from "react-hook-form";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+const API = import.meta.env.VITE_BASE_URL;
 interface Tag {
   authorid: string;
   _id: string;
@@ -65,7 +66,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
     if (contenttype !== "note") {
       note = "";
     }
-    const response = await fetch("http://192.168.1.8:3000/api/v1/content", {
+    const response = await fetch(API + "/api/v1/content", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -102,7 +103,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
       alert("empty tag");
       return;
     }
-    const resp = await fetch("http://192.168.1.8:3000/api/v1/tagname", {
+    const resp = await fetch(API + "/api/v1/tagname", {
       method: "POST",
       headers: {
         "Content-type": "application/json",

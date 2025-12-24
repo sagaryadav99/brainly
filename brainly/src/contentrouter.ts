@@ -166,7 +166,7 @@ contentrouter.post("/query", middleware, questionLimit, async (req, res) => {
   }
   const question = parsed.data;
   const userid = req.userid;
-  const fetchedsummaries = await fetch("http://127.0.0.1:8000/question", {
+  const fetchedsummaries = await fetch("http://localhost:8000/question", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({

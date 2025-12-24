@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import z from "zod";
+const API = import.meta.env.VITE_BASE_URL;
 interface searchbar {
   placeholder: string;
   hidden: boolean;
@@ -52,17 +53,14 @@ export function Searchbar(props: searchbar) {
   async function searchfunc(formdata: FormField) {
     const token = localStorage.getItem("token");
     const inputrefs = formdata.question;
-    const response = await fetch(
-      "http://192.168.1.8:3000/api/v1/content/query",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          authorization: token ? token : "",
-        },
-        body: JSON.stringify({ queryquestion: inputrefs }),
-      }
-    );
+    const response = await fetch(API + "/api/v1/content/query", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        authorization: token ? token : "",
+      },
+      body: JSON.stringify({ queryquestion: inputrefs }),
+    });
     if (!response.ok) {
       const error = await response.json();
       setError("root", { message: error.error });
@@ -141,7 +139,7 @@ export function Searchbar(props: searchbar) {
                 initial="close"
                 animate="open"
               >
-                {filterarr?.map((item: any) => {
+                {filterarr?.map((item: FilterArr) => {
                   return (
                     <motion.div variants={childVariant}>
                       <Smallcard
@@ -149,7 +147,7 @@ export function Searchbar(props: searchbar) {
                         title={item.title}
                         key={item._id}
                         contenttype={item.contenttype}
-                        note={item.note}
+                        note={item.note!}
                       />
                     </motion.div>
                   );
