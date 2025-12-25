@@ -54,7 +54,7 @@ export function Dashboard() {
     retry: false,
     onSuccess: (data) => {
       if (data.Link) {
-        setLink("http://localhost:5173/brainshare/" + data.Link);
+        setLink("https://www.mindraw.in/brainshare/" + data.Link);
       } else {
         setLink("");
       }

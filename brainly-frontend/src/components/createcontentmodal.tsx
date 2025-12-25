@@ -23,9 +23,16 @@ interface modalprops {
   reference?: React.RefObject<HTMLElement>;
 }
 const schema = z.object({
-  title: z.string().max(80, "too long").min(5, "too short"),
+  title: z
+    .string()
+    .max(80, "too long, 80 characters max")
+    .min(5, "min 5 characters"),
   link: z.url("invalid link"),
-  note: z.string().min(20, "too short").max(1500, "too long").optional(),
+  note: z
+    .string()
+    .min(20, "too short, min 20 characters")
+    .max(1500, "1500 characters max")
+    .optional(),
 });
 type FormField = z.infer<typeof schema>;
 export function Createcontenmodal({ open, onClose, refetch }: modalprops) {

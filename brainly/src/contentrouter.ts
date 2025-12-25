@@ -24,7 +24,7 @@ contentrouter.post("/", middleware, contentaddLimit, async (req, res) => {
   let { title, link, contenttype, tags, note } = parsed.data;
   let processedLink;
   if (contenttype === "youtube") {
-    if (link.length < 43) {
+    if (link.search("v=") === -1) {
       processedLink = link.split("be/").slice(-1);
     } else {
       processedLink = link.split("v=").slice(-1);

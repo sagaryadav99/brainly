@@ -7,7 +7,10 @@ import { LoaderCircle } from "../icons/loader";
 const API = import.meta.env.VITE_BASE_URL;
 const Schema = z.object({
   email: z.email(),
-  password: z.string().min(8, "too short").max(16, "too long"),
+  password: z
+    .string()
+    .min(8, "minimum 8 characters")
+    .max(16, "maximum 16 characters"),
 });
 type FormField = z.infer<typeof Schema>;
 export function SigninForm() {

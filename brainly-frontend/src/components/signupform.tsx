@@ -6,8 +6,14 @@ import { z } from "zod";
 const API = import.meta.env.VITE_BASE_URL;
 const Schema = z.object({
   email: z.email("Invalid email"),
-  password: z.string().min(8, "too short").max(16, "too long"),
-  fname: z.string().min(4, "too short").max(16, "too long"),
+  password: z
+    .string()
+    .min(8, "minimum 8 characters")
+    .max(16, "maximum 16 characters"),
+  fname: z
+    .string()
+    .min(4, "minimum 4 characters")
+    .max(16, "maximum 16 characters"),
 });
 type FormField = z.infer<typeof Schema>;
 export function SignupForm({ slidefn }: { slidefn: () => void }) {
