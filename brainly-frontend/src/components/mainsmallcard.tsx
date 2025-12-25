@@ -24,7 +24,7 @@ interface cardprops {
 export function MainSmallCard(props: cardprops) {
   return (
     <motion.div
-      className="flex flex-col justify-between text-neutral-400 bg-zinc-900 outline outline-black p-2 rounded-md shadow-[0_6px_14px_-4px_rgba(0,0,0,1)] overflow-hidden hover:-translate-y-1 transition-translate duration-300 ease-in-out"
+      className="flex flex-col justify-between text-neutral-400 bg-zinc-900 outline outline-black p-2 rounded-md shadow-[0_6px_14px_-4px_rgba(0,0,0,1)] overflow-hidden"
       layoutId={`card-${props.id}`}
       style={{
         willChange: "transform, opacity",
