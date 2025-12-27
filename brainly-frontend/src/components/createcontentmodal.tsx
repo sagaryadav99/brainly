@@ -138,6 +138,18 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
       setTags({ tagarr: newarr });
     }
   }
+  function onchangehandler(e: React.ChangeEvent<HTMLInputElement>) {
+    const link = e.target.value;
+    if (link.search("youtu.be") !== -1 || link.search("youtube") !== -1) {
+      setContent("youtube");
+      return;
+    }
+    if (link.search("x.com") !== -1) {
+      setContent("twitter");
+      return;
+    }
+    setContent("note");
+  }
   return (
     <div>
       <AnimatePresence>
@@ -202,6 +214,7 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                   {...register("link")}
                   placeholder="Link"
                   className="w-full px-2 py-1 bg-[#1F1F1F] focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all"
+                  onChange={onchangehandler}
                 />
                 {errors.link && (
                   <div className="text-red-500">{errors.link.message}</div>
@@ -271,8 +284,14 @@ export function Createcontenmodal({ open, onClose, refetch }: modalprops) {
                   </div>
                   <div className="flex items-center px-4 py-2 font-semibold rounded-md focus:outline-none ring ring-neutral-600 rounded-md focus:ring-3 focus:ring-neutral-600 transition-all flex-wrap">
                     Available Tags:
-                    {data?.map((item: Tag) => {
-                      return <Tagcomp content={item.tagname} addtag={addtag} />;
+                    {data?.map((item: Tag, idx: number) => {
+                      return (
+                        <Tagcomp
+                          key={idx + item.tagname}
+                          content={item.tagname}
+                          addtag={addtag}
+                        />
+                      );
                     })}
                   </div>
                 </div>
