@@ -20,6 +20,7 @@ pnpm-debug.log*
 *.log
 
 /pythonscript/chroma_storage/
+/pythonscript/venv/
 .DS_Store
 Thumbs.db
 

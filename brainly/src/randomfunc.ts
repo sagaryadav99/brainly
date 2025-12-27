@@ -1,7 +1,7 @@
 import Groq from "groq-sdk";
 import { Contentmodel } from "./db";
 import { ObjectId, Types } from "mongoose";
-
+const PYTHON_URL = process.env.PYTHON_SERVER_URL;
 const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
 export function randomhashgen(len: number) {
   const rant = process.env.RANDOM_STRING!;
@@ -66,7 +66,7 @@ export async function addingsummary(
 ) {
   if (contenttype == "youtube") {
     try {
-      const sumz = await fetch("http://localhost:8000/getsummary", {
+      const sumz = await fetch(PYTHON_URL + "/getsummary", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id: link }),
@@ -115,21 +115,21 @@ export async function addingsummary(
 }
 async function updatingandinserting(
   id: Types.ObjectId,
-  respsum: { transcript: { summary_text: string }[] }
+  respsum: { transcript: string }
 ) {
   try {
     const updateddoc = await Contentmodel.findByIdAndUpdate(id, {
-      summary: respsum.transcript[0].summary_text,
+      summary: respsum.transcript,
       summaryStatus: "ready",
     });
     try {
-      const sendsum = await fetch("http://localhost:8000/insertdoc", {
+      const sendsum = await fetch(PYTHON_URL + "/insertdoc", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           userid: updateddoc?.authorid,
           contentid: updateddoc?._id,
-          sum: respsum.transcript[0].summary_text,
+          sum: respsum.transcript,
         }),
       });
       const finaldat = await sendsum.json();
@@ -142,7 +142,7 @@ async function updatingandinserting(
 }
 async function gensum(summary: string) {
   try {
-    const sum = await fetch("http://localhost:8000/gensum", {
+    const sum = await fetch(PYTHON_URL + "/gensum", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ summary: summary }),

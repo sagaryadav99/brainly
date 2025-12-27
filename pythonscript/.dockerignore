@@ -3,3 +3,4 @@ chroma_storage/
 .env
 .git/
 .vscode/
+venv/

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtube_transcript_api.proxies import WebshareProxyConfig
-from transformers import pipeline
+from groq import Groq
 from typing import Dict
 from dotenv import load_dotenv
 import os
@@ -9,6 +9,10 @@ import chromadb
 load_dotenv()
 USERNAME=os.getenv("YOUTUBE_PROXY_USERNAME")
 PASSWORD=os.getenv("YOUTUBE_PROXY_PASSWORD")
+GROQ_API=os.getenv("GROQ_API_KEY")
+client = Groq(
+    api_key=GROQ_API,
+)
 chroma_client=chromadb.PersistentClient(path="./chroma_storage")
 from chromadb.utils import embedding_functions
 sentence_transformer_ef = embedding_functions.SentenceTransformerEmbeddingFunction(
@@ -26,7 +30,6 @@ class Docs(BaseModel):
 class Question(BaseModel):
     question:str
     userid:str
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
 ytt_api = YouTubeTranscriptApi(
     proxy_config=WebshareProxyConfig(
         proxy_username=USERNAME,
@@ -44,10 +47,13 @@ def fetchsummary(id:Item):
     a=""
     for val in fetched_transcript.snippets:
         a=a+" "+val.text
-    a=a[:4000]
+    a=a[:6000]
     prompt_text = a
     print(prompt_text) 
-    return {"transcript":summarizer(prompt_text,max_length=200,min_length=50,do_sample=False)}
+    newobj=Summ(summary=prompt_text)
+    newsum=generatesum(newobj)
+    print(newsum)
+    return newsum
 @app.post("/insertdoc")
 def insertdoc(fulldoc:Docs):
     collection=chroma_client.get_or_create_collection(name="mycollection",embedding_function=sentence_transformer_ef)
@@ -77,4 +83,19 @@ def updatepost(contentid:Docs):
     return {"updation":"succeeded"}
 @app.post("/gensum")
 def generatesum(summary:Summ):
-    return {"transcript":summarizer(summary.summary,max_length=200,min_length=50,do_sample=False)}
+    chat_completion = client.chat.completions.create(
+    messages=[
+        {
+            "role": "system",
+            "content": "You are a helpful assistant that summarizes the given youtube transcript or a tweet or a note provided by the user.Summarize as accurate as possible covering all the important points in 100-120 words maxmimum.Don't add anything extra just give the summary"
+        },
+        {
+            "role": "user",
+            "content": summary.summary,
+        }
+    ],
+    model="llama-3.3-70b-versatile",
+)
+
+    print(chat_completion.choices[0].message.content)
+    return {"transcript":chat_completion.choices[0].message.content}

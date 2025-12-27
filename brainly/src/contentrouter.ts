@@ -5,7 +5,7 @@ import { Contentmodel } from "./db";
 import { addingsummary, getGroqChatCompletion } from "./randomfunc";
 import { Datainterface } from "./types";
 import { questionLimit, contentaddLimit, generalLimiter } from "./limiters";
-
+const PYTHON_URL = process.env.PYTHON_SERVER_URL;
 import {
   contentSchema,
   idSchema,
@@ -99,7 +99,7 @@ contentrouter.delete("/", middleware, generalLimiter, async (req, res) => {
   const contentid = parsed.data;
   try {
     await Contentmodel.deleteOne({ authorid: userid, _id: contentid });
-    const chromadelete = await fetch("http://localhost:8000/deletedoc", {
+    const chromadelete = await fetch(PYTHON_URL + "/deletedoc", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -137,7 +137,7 @@ contentrouter.put(
       if (!updateddoc) {
         return;
       }
-      const chromaupdate = await fetch("http://localhost:8000/updatedoc", {
+      const chromaupdate = await fetch(PYTHON_URL + "/updatedoc", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -166,7 +166,7 @@ contentrouter.post("/query", middleware, questionLimit, async (req, res) => {
   }
   const question = parsed.data;
   const userid = req.userid;
-  const fetchedsummaries = await fetch("http://localhost:8000/question", {
+  const fetchedsummaries = await fetch(PYTHON_URL + "/question", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
