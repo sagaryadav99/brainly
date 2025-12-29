@@ -23,6 +23,7 @@ pnpm-debug.log*
 /pythonscript/venv/
 .DS_Store
 Thumbs.db
+/pythonscript/__pycache__
 
 .vscode/
 .idea/

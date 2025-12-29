@@ -12,6 +12,7 @@ const Schema = z.object({
     .max(16, "maximum 16 characters"),
   fname: z
     .string()
+    .trim()
     .min(4, "minimum 4 characters")
     .max(16, "maximum 16 characters"),
 });

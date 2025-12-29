@@ -4,7 +4,7 @@ export const usersigninSchema = z.object({
   password: z.string().min(8, "too short").max(16, "too long"),
 });
 export const usersignupSchema = z.object({
-  fname: z.string().min(4, "too short").max(8, "too long"),
+  fname: z.string().trim().min(4, "too short").max(16, "too long"),
   username: z.email("invalid email"),
   password: z.string().min(8, "too short").max(16, "too long"),
 });

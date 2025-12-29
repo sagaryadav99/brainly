@@ -22,22 +22,30 @@ contentrouter.post("/", middleware, contentaddLimit, async (req, res) => {
     return;
   }
   let { title, link, contenttype, tags, note } = parsed.data;
-  let processedLink;
+  let processedLink: string[] | undefined;
+  let finalLink: string;
   if (contenttype === "youtube") {
-    if (link.search("v=") === -1) {
-      processedLink = link.split("be/").slice(-1);
-    } else {
+    if (link.includes("v=")) {
       processedLink = link.split("v=").slice(-1);
+    } else if (link.includes("shorts/")) {
+      processedLink = link.split("shorts/").slice(-1);
+    } else if (link.includes("live/")) {
+      processedLink = link.split("live/").slice(-1);
+    } else if (link.includes("be/")) {
+      processedLink = link.split("be/").slice(-1);
     }
-    processedLink = processedLink[0].slice(0, 11);
+    if (!processedLink) {
+      return;
+    }
+    finalLink = processedLink[0].slice(0, 11);
   } else if (contenttype === "twitter") {
     processedLink = link.split("/").slice(-1);
-    processedLink = processedLink[0];
-    if (processedLink.length != 19) {
-      processedLink = processedLink.slice(0, 19);
+    finalLink = processedLink[0];
+    if (finalLink.length != 19) {
+      finalLink = finalLink.slice(0, 19);
     }
   } else {
-    processedLink = link;
+    finalLink = link;
   }
   if (!req.userid) {
     res.status(401).json({ message: "unauthorized" });
@@ -46,7 +54,7 @@ contentrouter.post("/", middleware, contentaddLimit, async (req, res) => {
   const authorid = req.userid;
   let data: Datainterface = {
     title,
-    link: processedLink,
+    link: finalLink,
     contenttype,
     tags: tags.tagarr ?? [],
     authorid,

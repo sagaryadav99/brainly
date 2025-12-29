@@ -43,9 +43,11 @@ def fetchsummary(id:Item):
     print(id.id)
     if not id.id:
         return
-    fetched_transcript=ytt_api.fetch(id.id)
+    transcript_list=ytt_api.list(id.id)
+    transcript = transcript_list.find_generated_transcript(['en', 'hi'])
+    fetched=transcript.fetch()
     a=""
-    for val in fetched_transcript.snippets:
+    for val in fetched.snippets:
         a=a+" "+val.text
     a=a[:6000]
     prompt_text = a
