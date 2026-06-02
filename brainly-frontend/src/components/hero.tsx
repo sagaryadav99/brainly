@@ -28,7 +28,16 @@ export function Hero() {
         >
           Try MINDRAW
         </button>
-        <button className="text-blue-500 ring font-medium ring-blue-700 px-8 py-2 rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101">
+        <button
+          onClick={() => {
+            window.open(
+              "https://www.loom.com/embed/6cfc1d00209a48feaed2a2bdbb0bf4f4",
+              "_blank",
+              "noopener,noreferrer",
+            );
+          }}
+          className="text-blue-500 ring font-medium ring-blue-700 px-8 py-2 rounded-lg cursor-pointer hover:ring-2 hover:ring-blue-700 transition-all hover:scale-101"
+        >
           Watch Demo
         </button>
       </div>

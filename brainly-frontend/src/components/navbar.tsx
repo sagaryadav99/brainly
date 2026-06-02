@@ -52,7 +52,16 @@ export function Navbar() {
         >
           Login/Signup
         </button>
-        <button className="cursor-pointer hover:bg-[#262626] hover:text-white px-4 py-2 rounded-lg transition-all duration-150">
+        <button
+          onClick={() => {
+            window.open(
+              "https://www.loom.com/embed/6cfc1d00209a48feaed2a2bdbb0bf4f4",
+              "_blank",
+              "noopener,noreferrer",
+            );
+          }}
+          className="cursor-pointer hover:bg-[#262626] hover:text-white px-4 py-2 rounded-lg transition-all duration-150"
+        >
           Demo
         </button>
         <button
